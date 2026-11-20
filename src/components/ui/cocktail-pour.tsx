@@ -1043,13 +1043,6 @@ const GlassView = React.memo(function GlassView({
         <g data-k="liquid" opacity={0} clipPath={`url(#${clip})`}>
           <path data-k="liq" fill={`url(#${liqId})`} />
           {g.glass && <path data-k="depth" fill={`url(#${id("liqDepth")})`} />}
-          {g.glass && (
-            <g filter={`url(#${id("blur3")})`} fill="none" strokeLinecap="round">
-              {Array.from({ length: TENDRILS }, (_, i) => (
-                <path key={i} data-k="tendril" strokeWidth={6 - i} />
-              ))}
-            </g>
-          )}
           <path data-k="foam" fill={`url(#${id("foamBand")})`} />
           <path data-k="surf" fill="#eee" />
           <g clipPath={`url(#${sclip})`}>
@@ -1064,10 +1057,6 @@ const GlassView = React.memo(function GlassView({
                 </g>
               )}
             </g>
-          </g>
-          <g fill="none" strokeLinecap="round" filter={`url(#${id("blur1")})`}>
-            <path data-k="swirl" strokeWidth={3.2} />
-            <path data-k="swirl" strokeWidth={2.2} />
           </g>
           <g fill="none" stroke="rgba(255,250,240,1)" strokeWidth={0.9}>
             {Array.from({ length: RIPPLES }, (_, i) => (

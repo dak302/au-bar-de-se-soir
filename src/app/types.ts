@@ -11,11 +11,6 @@ export interface Ingredient {
   nom_he: string;
   nom_en: string;
   dispo: boolean;
-  /** Liquid colour for the pour ("" = not a liquid: mint, basil). */
-  couleur?: string;
-  opacite?: number;
-  /** Default parts when a new cocktail's pour is worked out. */
-  dose?: number;
 }
 
 export interface Cocktail {
@@ -35,9 +30,10 @@ export interface Cocktail {
   glace?: boolean;
   garniture?: CocktailGarnish;
   mousse?: number;
-  melange?: number;
-  /** Parts per ingredient, in pour order. Missing: worked out from the ingredients. */
-  doses?: Record<string, number>;
+  /** The cocktail's colour in the glass, "#rrggbb" (one liquid, one colour). */
+  couleur?: string;
+  /** 0 = clear, 1 = fully opaque. */
+  opacite?: number;
 }
 
 export interface Category {

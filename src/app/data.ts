@@ -1,4 +1,4 @@
-import type { CocktailPourItem, CocktailVessel, PourLayer } from "@/components/ui/cocktail-pour";
+import type { CocktailPourItem, CocktailVessel } from "@/components/ui/cocktail-pour";
 import { BRANCH, REPO } from "./config";
 import type { Cocktail, Db, Ingredient, Lang } from "./types";
 
@@ -79,71 +79,27 @@ export async function sha256(s: string) {
 /*                         From a cocktail to a pour                          */
 /* -------------------------------------------------------------------------- */
 
-const SODA = ["ginger_beer", "eau_gazeuse"];
-const GROUP_ORDER = { alcool: 0, liqueur: 1, frais: 2, sirop: 3, bitters: 4 } as const;
-const BASE_COLOUR: Record<string, [string, number]> = {
-  whisky: ["#D99A3E", 0.72],
-  tequila: ["#F0ECE0", 0.16],
-};
+export const DEFAULT_COLOUR = "#E9C27A";
 
 /** The glass a cocktail goes in when none was chosen. */
 export function defaultVessel(c: Cocktail): CocktailVessel {
-  if (c.ingredients.some((r) => SODA.includes(r))) return c.ingredients.includes("ginger_beer") ? "copper-mug" : "highball";
+  if (c.ingredients.includes("ginger_beer")) return "copper-mug";
+  if (c.ingredients.includes("eau_gazeuse")) return "highball";
   if (c.categorie === "whisky" || c.ingredients.includes("campari")) return "rocks";
   return "coupe";
 }
 
-/** Colour of an ingredient (a "cat:" one takes the first bottle on the shelf). */
-function colourOf(r: string, ings: Ingredient[]): [string, number] | null {
-  let ing: Ingredient | undefined;
-  if (r.startsWith("cat:")) {
-    const b = r.slice(4);
-    ing = ings.find((i) => i.base === b && isOn(i.dispo)) || ings.find((i) => i.base === b);
-    if (!ing?.couleur) return BASE_COLOUR[b] || ["#EEF0EC", 0.16];
-  } else {
-    ing = ings.find((i) => i.id === r);
-  }
-  if (!ing || !ing.couleur) return null;
-  return [ing.couleur, ing.opacite ?? 0.5];
-}
-
-/** Parts per ingredient: the cocktail's own doses, else worked out from the ingredients. */
-export function dosesOf(c: Cocktail, ings: Ingredient[]): Record<string, number> {
-  if (c.doses && Object.keys(c.doses).length) return c.doses;
-  const rank = (r: string) => {
-    if (SODA.includes(r)) return 9;
-    if (r.startsWith("cat:")) return -1;
-    const i = ings.find((x) => x.id === r);
-    return i ? GROUP_ORDER[i.groupe] ?? 5 : 5;
-  };
-  const out: Record<string, number> = {};
-  c.ingredients
-    .slice()
-    .sort((a, b) => rank(a) - rank(b))
-    .forEach((r) => {
-      const i = r.startsWith("cat:") ? null : ings.find((x) => x.id === r);
-      out[r] = r.startsWith("cat:") ? 2 : i?.dose ?? 1;
-    });
-  return out;
-}
-
-export function toPourItem(c: Cocktail, ings: Ingredient[], lang: Lang): CocktailPourItem {
+/** One liquid, one colour: the cocktail as it looks in the glass. */
+export function toPourItem(c: Cocktail, lang: Lang): CocktailPourItem {
   const vessel = c.verre || defaultVessel(c);
   const fill = vessel === "martini" ? 0.8 : vessel === "coupe" ? 0.82 : 0.78;
-  const doses = dosesOf(c, ings);
-  const parts = Object.entries(doses)
-    .map(([r, d]) => ({ col: colourOf(r, ings), d: Number(d) || 0 }))
-    .filter((p): p is { col: [string, number]; d: number } => !!p.col && p.d > 0);
-  const total = parts.reduce((s, p) => s + p.d, 0) || 1;
-  const layers: PourLayer[] = parts.map((p) => ({ color: p.col[0], alpha: p.col[1], amount: (p.d / total) * fill }));
   return {
     id: c.id,
     name: c.nom,
     subtitle: pick(c, "style", lang),
     description: pick(c, "phrase", lang),
     vessel,
-    layers: layers.length ? layers : [{ color: "#EEF0EC", alpha: 0.2, amount: fill }],
-    blend: c.melange ?? 1,
+    layers: [{ color: c.couleur || DEFAULT_COLOUR, alpha: c.opacite ?? 0.85, amount: fill }],
     ice: c.glace ?? ["rocks", "highball", "copper-mug"].includes(vessel),
     foam: c.mousse || 0,
     garnish: c.garniture || "none",

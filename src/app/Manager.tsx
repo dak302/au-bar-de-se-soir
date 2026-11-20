@@ -2,7 +2,7 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 import { CocktailPourStage, type CocktailGarnish, type CocktailVessel } from "@/components/ui/cocktail-pour";
 import { CODE_HASH, GB_URL } from "./config";
-import { byOrder, clone, missing, newId, photoUrl, sha256, store, toPourItem } from "./data";
+import { byOrder, clone, DEFAULT_COLOUR, missing, newId, photoUrl, sha256, store, toPourItem } from "./data";
 import { canPush, deleteFile, GitHubError, loadDb, putDb, putPhoto } from "./github";
 import { ideaIngredients, loadIdeas, matchIdea, type CdbDrink } from "./ideas";
 import { gbCall } from "./guestbook";
@@ -228,7 +228,6 @@ export function Manager({ store: s, gb, setGb, onExit, errorText }: {
           {items.length ? items.map((i) => (
             <div key={i.id} className={cn("row", !i.dispo && "off")}>
               <button className="row-main" onClick={() => openEdit({ type: "ing", obj: i })}>
-                {i.couleur ? <span className="thumb" style={{ width: 18, height: 18, borderRadius: 9, background: i.couleur, border: "1px solid rgba(28,26,23,.25)" }} /> : null}
                 <span className="row-txt"><span className="row-title">{i.nom_fr}</span>{i.base && <span className="row-sub">{catName(i.base)}</span>}</span>
               </button>
               <button
@@ -374,10 +373,9 @@ function Translations({ children }: { children: React.ReactNode }) {
 
 function IngredientSheet({ s, obj, bases, close }: { s: Store; obj: Ingredient | null; bases: Category[]; close: () => void }) {
   const toast = useToast();
-  const [f, setF] = React.useState<Ingredient>(obj ? { ...obj } : { id: "", groupe: "alcool", base: bases[0]?.id || "", nom_fr: "", nom_he: "", nom_en: "", dispo: true, couleur: "#EEF0EC", opacite: 0.2, dose: 2 });
+  const [f, setF] = React.useState<Ingredient>(obj ? { ...obj } : { id: "", groupe: "alcool", base: bases[0]?.id || "", nom_fr: "", nom_he: "", nom_en: "", dispo: true });
   const [err, setErr] = React.useState("");
   const set = (p: Partial<Ingredient>) => setF((x) => ({ ...x, ...p }));
-  const liquid = !!f.couleur;
   return (
     <div dir="ltr">
       <h2>{obj ? "Ingrédient" : "Nouvel ingrédient"}</h2>
@@ -396,18 +394,6 @@ function IngredientSheet({ s, obj, bases, close }: { s: Store; obj: Ingredient |
         <span className="row-title" style={{ flex: 1 }}>Disponible</span>
         <button className="switch" aria-pressed={f.dispo} aria-label="Disponible" onClick={() => set({ dispo: !f.dispo })} />
       </div>
-      <div className="row" style={{ border: "none" }}>
-        <span className="row-title" style={{ flex: 1 }}>C'est un liquide (versé dans le verre)</span>
-        <button className="switch" aria-pressed={liquid} aria-label="Liquide" onClick={() => set({ couleur: liquid ? "" : "#E8E2D2", opacite: liquid ? 0 : 0.5 })} />
-      </div>
-      {liquid && (
-        <>
-          <div className="field"><label htmlFor="f_col">Couleur du liquide</label>
-            <input className="input" id="f_col" type="color" value={f.couleur} onChange={(e) => set({ couleur: e.target.value })} style={{ height: 52, padding: 6 }} /></div>
-          <div className="field"><label htmlFor="f_op">Transparent ↔ opaque</label>
-            <input id="f_op" type="range" min={0} max={1} step={0.05} value={f.opacite ?? 0.5} onChange={(e) => set({ opacite: Number(e.target.value) })} /></div>
-        </>
-      )}
       <Translations>
         <div className="field"><label htmlFor="f_he">Nom en hébreu</label><input className="input" id="f_he" dir="rtl" value={f.nom_he} onChange={(e) => set({ nom_he: e.target.value })} /></div>
         <div className="field"><label htmlFor="f_en">Nom en anglais</label><input className="input" id="f_en" value={f.nom_en} onChange={(e) => set({ nom_en: e.target.value })} /></div>
@@ -426,7 +412,7 @@ function IngredientSheet({ s, obj, bases, close }: { s: Store; obj: Ingredient |
             await s.mutate((d) => {
               const ex = obj && d.ingredients.find((x) => x.id === obj.id);
               if (ex) Object.assign(ex, clean);
-              else d.ingredients.push({ ...clean, id: newId(clean.nom_fr), dose: clean.groupe === "alcool" ? 2 : clean.groupe === "sirop" ? 0.5 : 1 });
+              else d.ingredients.push({ ...clean, id: newId(clean.nom_fr) });
             }, "Ingrédient : " + clean.nom_fr);
             close();
             toast("Enregistré");
@@ -452,8 +438,8 @@ function CocktailSheet({ s, obj, cats, bases, close, pickPhoto, reopen }: {
   const chip = (r: string, label: string) => (
     <button key={r} className="chip" aria-pressed={f.ingredients.includes(r)} onClick={() => toggle(r)}>{label}</button>
   );
-  const preview = React.useMemo(() => toPourItem(f, db.ingredients, "fr"), [f, db.ingredients]);
-  const previewKey = [preview.vessel, preview.garnish, preview.ice, f.ingredients.join(","), JSON.stringify(f.doses || {})].join("|");
+  const preview = React.useMemo(() => toPourItem(f, "fr"), [f]);
+  const previewKey = [preview.vessel, preview.garnish, preview.ice, f.couleur, f.opacite].join("|");
 
   return (
     <div dir="ltr">
@@ -473,12 +459,10 @@ function CocktailSheet({ s, obj, cats, bases, close, pickPhoto, reopen }: {
         <select className="input" id="f_garn" value={f.garniture || "none"} onChange={(e) => set({ garniture: e.target.value as CocktailGarnish })}>
           {GARNISHES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
         </select></div>
-      {f.doses && Object.keys(f.doses).length > 0 && (
-        <div className="row" style={{ border: "none" }}>
-          <span className="row-sub" style={{ flex: 1, whiteSpace: "normal" }}>Doses du verre : réglées à la main.</span>
-          <button className="mini" onClick={() => set({ doses: undefined })}>Recalculer</button>
-        </div>
-      )}
+      <div className="field"><label htmlFor="f_col">Couleur du cocktail</label>
+        <input className="input" id="f_col" type="color" value={f.couleur || DEFAULT_COLOUR} onChange={(e) => set({ couleur: e.target.value })} style={{ height: 52, padding: 6 }} /></div>
+      <div className="field"><label htmlFor="f_op">Transparent ↔ opaque</label>
+        <input id="f_op" type="range" min={0.2} max={1} step={0.05} value={f.opacite ?? 0.85} onChange={(e) => set({ opacite: Number(e.target.value) })} /></div>
       <div className="field"><label>Photo</label>
         <div className="photo-row">
           <span className="thumb" style={photo ? { backgroundImage: `url('${photoUrl(photo, true)}')` } : undefined} />
@@ -513,9 +497,7 @@ function CocktailSheet({ s, obj, cats, bases, close, pickPhoto, reopen }: {
           const nom = f.nom.trim();
           if (!nom) return setErr("Le nom est obligatoire");
           if (!f.ingredients.length) return setErr("Ajoute au moins un ingrédient");
-          // keep only the doses of ingredients still in the cocktail
-          const doses = f.doses ? Object.fromEntries(Object.entries(f.doses).filter(([r]) => f.ingredients.includes(r))) : undefined;
-          const clean: Cocktail = { ...f, nom, doses: doses && Object.keys(doses).length ? doses : undefined };
+          const clean: Cocktail = { ...f, nom, couleur: f.couleur || DEFAULT_COLOUR, opacite: f.opacite ?? 0.85 };
           try {
             const id = await s.mutate((d) => {
               const ex = obj?.id && d.cocktails.find((x) => x.id === obj.id);

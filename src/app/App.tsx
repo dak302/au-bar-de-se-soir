@@ -114,8 +114,8 @@ export default function App() {
           ) : <p className="empty rise">{t("empty")}</p>}
         </>
       );
-    if (v === "cat") return <CategoryView key={curCat} pub={pub} db={db!} cat={curCat} lang={lang} title={catLabel(curCat || "")} card={card} />;
-    if (v === "surprise") return <SurpriseView pub={pub} db={db!} lang={lang} t={t} catLabel={catLabel} card={card} />;
+    if (v === "cat") return <CategoryView key={curCat} pub={pub} cat={curCat} lang={lang} title={catLabel(curCat || "")} card={card} />;
+    if (v === "surprise") return <SurpriseView pub={pub} lang={lang} t={t} catLabel={catLabel} card={card} />;
     if (v === "guestbook") return <GuestbookView lang={lang} t={t} gb={gb} setGb={setGb} />;
     if (v === "about") {
       const a = ABOUT[lang] || ABOUT.fr;
@@ -174,12 +174,12 @@ export default function App() {
 /*                Category: the pour stage, the names, the card                */
 /* -------------------------------------------------------------------------- */
 
-function CategoryView({ pub, db, cat, lang, title, card }: {
-  pub: Pub; db: Db; cat: string | null; lang: Lang; title: string; card: (c: Cocktail, i: number) => React.ReactNode;
+function CategoryView({ pub, cat, lang, title, card }: {
+  pub: Pub; cat: string | null; lang: Lang; title: string; card: (c: Cocktail, i: number) => React.ReactNode;
 }) {
   const list = pub.cocktails.filter((c) => c.categorie === cat);
   const [sel, setSel] = React.useState(list[0]?.id);
-  const items = React.useMemo(() => list.map((c) => toPourItem(c, db.ingredients, lang)), [list, db.ingredients, lang]);
+  const items = React.useMemo(() => list.map((c) => toPourItem(c, lang)), [list, lang]);
   const current = list.find((c) => c.id === sel) || list[0];
   return (
     <>
@@ -198,8 +198,8 @@ function CategoryView({ pub, db, cat, lang, title, card }: {
 /*                                   Surprise                                 */
 /* -------------------------------------------------------------------------- */
 
-function SurpriseView({ pub, db, lang, t, catLabel, card }: {
-  pub: Pub; db: Db; lang: Lang; t: (k: string) => string; catLabel: (id: string) => string; card: (c: Cocktail, i: number) => React.ReactNode;
+function SurpriseView({ pub, lang, t, catLabel, card }: {
+  pub: Pub; lang: Lang; t: (k: string) => string; catLabel: (id: string) => string; card: (c: Cocktail, i: number) => React.ReactNode;
 }) {
   const draw = React.useCallback((not?: string) => {
     const all = pub.cocktails;
@@ -212,7 +212,7 @@ function SurpriseView({ pub, db, lang, t, catLabel, card }: {
     <>
       <div className="pad rise" style={{ paddingTop: 18 }}><p className="eyebrow">{catLabel(c.categorie)}</p><h1 className="h1 big">{t("surprise")}</h1></div>
       <div className="pad rise" style={{ "--i": 1, marginTop: 22 } as React.CSSProperties}>
-        <CocktailPourStage item={toPourItem(c, db.ingredients, lang)} />
+        <CocktailPourStage item={toPourItem(c, lang)} />
       </div>
       <button className="again rise" style={{ "--i": 2 } as React.CSSProperties} onClick={() => setC(draw(c.id))}>{t("another")}</button>
       <div className="list" key={c.id}>{card(c, 3)}</div>
