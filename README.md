@@ -19,6 +19,12 @@ Tout vit dans ce dépôt GitHub :
 - Le **Manager** (menu ≡ → Manager) enregistre directement dans `data.json` et `photos/`.
   Les invités voient les changements environ 1 minute après (le temps que GitHub Pages republie).
 
+## Idées (TheCocktailDB)
+
+Manager → Cocktails → **Idées** : compare la base publique TheCocktailDB (~600 cocktails, en anglais,
+gratuite, sans clé) avec ton stock, et liste ce qui est faisable tout de suite ou à un ingrédient près.
+« Ajouter » pré-remplit la fiche. Les invités ne voient rien de cette partie.
+
 ## Manager : clé GitHub
 
 La première fois sur un appareil, le Manager demande le code **et** une clé GitHub.

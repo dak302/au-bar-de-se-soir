@@ -398,7 +398,7 @@ const OPS = {
       const ex = o.id && d.cocktails.find(x => x.id === o.id);
       if (ex){ Object.assign(ex, clean); return ex.id; }
       const nid = newId(clean.nom), max = d.cocktails.reduce((m, c) => Math.max(m, Number(c.ordre) || 0), 0);
-      d.cocktails.push(Object.assign({ id: nid, photo: '', ordre: max + 1 }, clean)); return nid;
+      d.cocktails.push(Object.assign({ id: nid, photo: /^https:\/\//.test(o.photo || '') ? o.photo : '', ordre: max + 1 }, clean)); return nid;
     }, 'Cocktail : ' + clean.nom);
     return { id, data: computeAdmin() };
   },
@@ -699,7 +699,7 @@ function renderCktTab(){
   const ok = admin.cocktails.filter(c => !c.manque.length);
   const ko = admin.cocktails.filter(c => c.manque.length);
   return `
-    <div class="sec"><h3>Disponibles · ${ok.length}</h3><button class="add" data-act="ckt-new">+ Cocktail</button></div>
+    <div class="sec"><h3>Disponibles · ${ok.length}</h3><span style="display:flex;gap:8px"><button class="add" style="background:var(--soft);color:var(--ink)" data-act="ideas">Idées</button><button class="add" data-act="ckt-new">+ Cocktail</button></span></div>
     <div class="box">${ok.length ? ok.map(cktRow).join('') : none}</div>
     <div class="sec"><h3>Indisponibles · ${ko.length}</h3></div>
     <div class="box">${ko.length ? ko.map(cktRow).join('') : none}</div>`;
@@ -924,6 +924,15 @@ document.addEventListener('click', async e => {
       }); break;
 
     case 'ckt-new': cktSheet(null); break;
+    case 'ideas': ideasSheet(); break;
+    case 'idea-add': {
+      const d = (ideas.all || []).find(x => x.idDrink === el.dataset.id); if (!d) return;
+      const m = matchIdea(d);
+      cktSheet({ id:'', nom: d.strDrink, categorie: m.cat, style_fr:'', style_he:'', style_en:'',
+        phrase_fr:'', phrase_he:'', phrase_en:'', ingredients: m.ids, photo: d.strDrinkThumb || '' });
+      toast('Complète le style et la phrase, puis enregistre');
+      break;
+    }
     case 'ckt-edit': cktSheet(admin.cocktails.find(x => x.id === id)); break;
     case 'chip': {
       const r = el.dataset.r;
@@ -1020,6 +1029,97 @@ document.addEventListener('submit', async e => {
     });
   }
 });
+
+/* ---------- Idées (TheCocktailDB) ---------- */
+// Base publique de ~600 cocktails (en anglais), interrogée seulement depuis le Manager.
+const CDB = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?f=';
+const ideas = { all: null, loading: null };
+// Noms d'ingrédients TheCocktailDB -> tes ingrédients (cat:… = n'importe quelle bouteille de la catégorie).
+const CDB_MAP = {
+  'vodka':'cat:vodka', 'gin':'cat:gin', 'tequila':'cat:tequila',
+  'rum':'cat:rhum', 'light rum':'cat:rhum', 'white rum':'cat:rhum', 'dark rum':'cat:rhum', 'gold rum':'cat:rhum', 'spiced rum':'cat:rhum',
+  'whiskey':'cat:whisky', 'whisky':'cat:whisky', 'scotch':'cat:whisky', 'bourbon':'cat:whisky', 'blended whiskey':'cat:whisky', 'rye whiskey':'cat:whisky', 'irish whiskey':'cat:whisky',
+  'lemon':'citron', 'lemon juice':'citron', 'lemon peel':'citron', 'juice of lemon':'citron',
+  'lime':'citron_vert', 'lime juice':'citron_vert', 'lime peel':'citron_vert',
+  'sugar syrup':'sirop_sucre', 'simple syrup':'sirop_sucre', 'sugar':'sirop_sucre', 'powdered sugar':'sirop_sucre', 'demerara sugar':'sirop_sucre', 'brown sugar':'sirop_sucre',
+  'honey':'miel', 'honey syrup':'miel',
+  'mint':'menthe', 'basil':'basilic', 'ginger beer':'ginger_beer',
+  'soda water':'eau_gazeuse', 'carbonated water':'eau_gazeuse', 'club soda':'eau_gazeuse',
+  'angostura bitters':'angostura', 'bitters':'angostura',
+  'triple sec':'cointreau', 'cointreau':'cointreau', 'orange liqueur':'cointreau',
+  'campari':'campari', 'sweet vermouth':'martini_rosso', 'red vermouth':'martini_rosso', 'vermouth':'martini_rosso',
+  'amaretto':'liq_amande', 'kahlua':'liq_cafe', 'coffee liqueur':'liq_cafe', 'espresso':'espresso', 'coffee':'espresso',
+  'passion fruit syrup':'sirop_passion', 'passion fruit juice':'sirop_passion', 'passoa':'liq_passion',
+  'strawberry liqueur':'liq_fraise', 'strawberry schnapps':'liq_fraise', 'creme de cacao':'liq_chocolat', 'chocolate liqueur':'liq_chocolat'
+};
+const CDB_SKIP = ['ice', 'water', 'salt', 'crushed ice'];   // ce qu'on a toujours
+function ideaIngredients(d){
+  const out = [];
+  for (let i = 1; i <= 15; i++){ const v = (d['strIngredient' + i] || '').trim(); if (v) out.push(v); }
+  return out;
+}
+function matchIdea(d){
+  const ings = admin.ingredients, ids = [], missing = [];
+  const have = r => r.indexOf('cat:') === 0 ? ings.some(i => i.base === r.slice(4) && i.dispo) : (ings.find(i => i.id === r) || {}).dispo;
+  ideaIngredients(d).forEach(name => {
+    const k = name.toLowerCase();
+    if (CDB_SKIP.indexOf(k) !== -1) return;
+    let r = CDB_MAP[k];
+    if (!r){ const i = ings.find(x => (x.nom_en || '').toLowerCase() === k); if (i) r = i.id; }
+    if (r && ids.indexOf(r) === -1) ids.push(r);
+    if (!r || !have(r)) missing.push(name);
+  });
+  const base = ids.find(r => r.indexOf('cat:') === 0);
+  const cat = (d.strAlcoholic || '').toLowerCase().indexOf('non') === 0 ? 'sansalcool' : base ? base.slice(4) : 'autres';
+  return { ids, missing, cat };
+}
+async function loadIdeas(){
+  if (ideas.all) return ideas.all;
+  if (!ideas.loading) ideas.loading = (async () => {
+    const letters = 'abcdefghijklmnopqrstuvwxyz0123456789'.split(''), all = [];
+    for (let i = 0; i < letters.length; i += 6){
+      const res = await Promise.all(letters.slice(i, i + 6).map(l =>
+        fetch(CDB + l).then(r => r.ok ? r.json() : { drinks: null }).catch(() => ({ drinks: null }))));
+      res.forEach(j => (j.drinks || []).forEach(d => all.push(d)));
+    }
+    if (!all.length) throw new Error('TheCocktailDB ne répond pas');
+    ideas.all = all; return all;
+  })().finally(() => { ideas.loading = null; });
+  return ideas.loading;
+}
+function ideaRow(d, m){
+  return `<div class="row">
+    <span class="thumb" style="${thumbStyle(d.strDrinkThumb ? d.strDrinkThumb + '/preview' : '')}"></span>
+    <span class="row-txt" style="flex:1"><span class="row-title">${esc(d.strDrink)}</span>
+      <span class="row-sub" style="white-space:normal">${m.missing.length ? 'Manque : ' + esc(m.missing.join(', ')) : esc(ideaIngredients(d).join(' · '))}</span></span>
+    <button class="mini" data-act="idea-add" data-id="${esc(d.idDrink)}">Ajouter</button></div>`;
+}
+async function ideasSheet(){
+  openSheet(`<div dir="ltr"><h2>Idées</h2>
+    <p class="row-sub" style="white-space:normal;margin:8px 0 0">D'après ton stock, dans la base TheCocktailDB (recettes en anglais).</p>
+    <div id="ideasBody" style="margin-top:18px"><p class="empty" style="padding:40px 0"><span class="spin"></span></p></div></div>`);
+  try {
+    const all = await loadIdeas();
+    const mine = new Set(admin.cocktails.map(c => c.nom.toLowerCase()));
+    const now = [], one = [];
+    all.forEach(d => {
+      if (mine.has(d.strDrink.toLowerCase())) return;
+      const m = matchIdea(d);
+      if (!m.ids.length) return;
+      if (!m.missing.length) now.push([d, m]); else if (m.missing.length === 1) one.push([d, m]);
+    });
+    const byName = (a, b) => a[0].strDrink.localeCompare(b[0].strDrink);
+    now.sort(byName); one.sort(byName);
+    const body = $('#ideasBody'); if (!body) return;
+    body.innerHTML = `
+      <div class="sec" style="margin:0 0 10px"><h3>Faisables maintenant · ${now.length}</h3></div>
+      <div class="box" style="margin:0">${now.length ? now.map(x => ideaRow(...x)).join('') : none}</div>
+      <div class="sec" style="margin:24px 0 10px"><h3>Il manque un ingrédient · ${one.length}</h3></div>
+      <div class="box" style="margin:0">${one.length ? one.slice(0, 60).map(x => ideaRow(...x)).join('') : none}</div>`;
+  } catch(e){
+    const body = $('#ideasBody'); if (body) body.innerHTML = `<p class="err">${esc(errMsg(e))}. Réessaie plus tard.</p>`;
+  }
+}
 
 /* ---------- Gestes ---------- */
 // Sur iPhone, :active (retour d'appui) ne s'allume que si la page écoute touchstart.
