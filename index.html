@@ -14,8 +14,6 @@
 <meta property="og:title" content="Au Bar de ce Soir">
 <meta property="og:description" content="La carte des cocktails du bar de ce soir.">
 <meta property="og:image" content="icone.png">
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
-<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Frank+Ruhl+Libre:wght@500&family=Heebo:wght@400;500;600&family=Inter:wght@400;500;600&display=swap">
 <style>
@@ -36,6 +34,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 input,select,textarea{font-size:16px}
 button{cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 img{-webkit-touch-callout:none}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:12px}
 #app{position:relative;height:100dvh;max-width:560px;margin:0 auto;overflow:hidden}
 .top{position:absolute;top:0;left:0;right:0;z-index:20;height:var(--top);padding:env(safe-area-inset-top) 12px 0;display:flex;align-items:center;justify-content:space-between;background:rgba(247,243,236,.82);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
 .icon-btn{width:44px;height:44px;border:none;background:transparent;border-radius:22px;display:flex;align-items:center;justify-content:center;transition:transform var(--press) var(--ease),opacity .2s var(--ease),background var(--press)}
@@ -84,15 +84,15 @@ img{-webkit-touch-callout:none}
 .acc{display:grid;grid-template-rows:0fr;transition:grid-template-rows 300ms var(--ease)}
 .acc.open{grid-template-rows:1fr}
 .acc>div{overflow:hidden}
-.d-sub{display:block;width:100%;text-align:start;border:none;background:transparent;padding:10px 4px;font-size:16px;color:var(--ink2);transition:color var(--press),transform var(--press) var(--ease)}
+.d-sub{display:block;width:100%;min-height:44px;text-align:start;border:none;background:transparent;padding:10px 4px;font-size:16px;color:var(--ink2);transition:color var(--press),transform var(--press) var(--ease)}
 .d-sub:active{transform:translateX(4px);color:var(--ink);transition-duration:80ms}
 .d-big{transition:opacity var(--press)}
 .d-big:active,.d-manager:active,.logout:active{opacity:.55;transition-duration:60ms}
 .d-sep{height:1px;background:var(--line);margin:8px 0;flex:none}
 .seg{display:grid;gap:4px;background:var(--soft);border-radius:14px;padding:4px}
-.seg button{border:none;height:40px;border-radius:11px;background:transparent;font-size:14px;color:var(--ink2);transition:background 200ms var(--ease),box-shadow 200ms var(--ease),color 200ms}
+.seg button{border:none;height:44px;border-radius:11px;background:transparent;font-size:14px;color:var(--ink2);transition:background 200ms var(--ease),box-shadow 200ms var(--ease),color 200ms}
 .seg button[aria-pressed="true"]{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(28,26,23,.12)}
-.d-manager{display:flex;align-items:center;gap:10px;border:none;background:transparent;padding:12px 0 0;font-size:15px;color:var(--ink2)}
+.d-manager{display:flex;align-items:center;gap:10px;border:none;background:transparent;padding:12px 0 0;min-height:44px;font-size:15px;color:var(--ink2)}
 .field{display:flex;flex-direction:column;gap:6px;margin-top:16px}
 .field label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
 .input{width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px 14px;font-size:16px;outline:none;transition:border-color .25s}
@@ -113,7 +113,7 @@ textarea.input{resize:none;min-height:96px;line-height:1.45}
 .tabs button{font-size:12.5px;padding:0 2px}
 .sec{margin:28px 24px 10px;display:flex;justify-content:space-between;align-items:center}
 .sec h3{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:500}
-.add{border:none;background:var(--ink);color:#FBF8F3;height:36px;padding:0 14px;border-radius:18px;font-size:14px;transition:transform var(--press) var(--ease)}
+.add{border:none;background:var(--ink);color:#FBF8F3;height:44px;padding:0 16px;border-radius:22px;font-size:14px;transition:transform var(--press) var(--ease)}
 .add:active{transform:scale(.96);transition-duration:80ms}
 .box{margin:0 24px;background:#fff;border-radius:20px;padding:2px 16px}
 .row{display:flex;align-items:center;gap:12px;min-height:58px;border-bottom:1px solid var(--soft)}
@@ -128,12 +128,13 @@ textarea.input{resize:none;min-height:96px;line-height:1.45}
 .thumb{width:42px;height:42px;border-radius:12px;flex:none;background:var(--ph) center/cover no-repeat}
 .switch{flex:none;width:52px;height:32px;border:none;border-radius:16px;background:#DDD5C8;padding:3px;position:relative;transition:background 200ms var(--ease)}
 .switch::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:13px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform 250ms var(--ease)}
+.switch::before{content:"";position:absolute;inset:-6px}
 .switch[aria-pressed="true"]{background:var(--ink)}
 .switch[aria-pressed="true"]::after{transform:translateX(20px)}
-.mini{flex:none;border:none;background:var(--soft);border-radius:12px;height:36px;padding:0 12px;font-size:13px;transition:background var(--press),color var(--press),transform var(--press) var(--ease)}
+.mini{flex:none;border:none;background:var(--soft);border-radius:12px;height:44px;padding:0 14px;font-size:13px;transition:background var(--press),color var(--press),transform var(--press) var(--ease)}
 .mini:active{transform:scale(.95);transition-duration:80ms}
 .mini.armed{background:#9B2C1F;color:#fff}
-.logout{display:block;margin:34px auto 0;border:none;background:transparent;color:var(--mute);font-size:14px;padding:10px}
+.logout{display:block;margin:34px auto 0;border:none;background:transparent;color:var(--mute);font-size:14px;padding:10px;min-height:44px}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:51;max-width:560px;margin:0 auto;max-height:92dvh;overflow-y:auto;overscroll-behavior:contain;background:var(--bg);border-radius:28px 28px 0 0;padding:10px 24px calc(28px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform 450ms var(--ease-drawer)}
 .dragging{transition:none!important}
 .sheet.on{transform:none}
@@ -141,7 +142,7 @@ textarea.input{resize:none;min-height:96px;line-height:1.45}
 .sheet h2{margin:0;font-family:var(--serif);font-weight:500;font-size:34px}
 .veil2{z-index:50}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{border:1px solid var(--line);background:#fff;border-radius:18px;height:36px;padding:0 14px;font-size:14px;transition:background var(--press) var(--ease),color var(--press),border-color var(--press),transform var(--press) var(--ease)}
+.chip{border:1px solid var(--line);background:#fff;border-radius:22px;height:44px;padding:0 16px;font-size:14px;transition:background var(--press) var(--ease),color var(--press),border-color var(--press),transform var(--press) var(--ease)}
 .chip:active{transform:scale(.95);transition-duration:80ms}
 .chip[aria-pressed="true"]{background:var(--ink);color:#FBF8F3;border-color:var(--ink)}
 .chip-group{margin-top:12px}
@@ -161,12 +162,6 @@ summary::-webkit-details-marker{display:none}
 @keyframes breathe{50%{opacity:.45}}
 .spin{width:18px;height:18px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes sp{to{transform:rotate(360deg)}}
-/* Verre 3D */
-.glass-slot{position:relative;height:230px;margin:4px 0 -6px;touch-action:pan-y}
-.glass-canvas{display:block;width:100%;height:100%;opacity:0;transition:opacity 500ms var(--ease);cursor:grab}
-.glass-slot.ready .glass-canvas{opacity:1}
-.glass-canvas:active{cursor:grabbing}
-.no3d .glass-slot{display:none}
 /* Mouvement réduit : on garde des fondus courts, on enlève les déplacements. */
 @media (prefers-reduced-motion:reduce){
   .rise{animation:fade 200ms ease forwards;transform:none;animation-delay:0ms}
@@ -190,7 +185,7 @@ summary::-webkit-details-marker{display:none}
     <button class="icon-btn hide" id="backBtn" data-act="back" aria-label="Retour">
       <svg width="12" height="20" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8" fill="none" stroke="#1C1A17" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
-    <button class="icon-btn" data-act="menu" aria-label="Menu">
+    <button class="icon-btn" id="menuBtn" data-act="menu" aria-label="Menu" aria-expanded="false" aria-controls="drawer">
       <svg width="22" height="16" viewBox="0 0 22 16" aria-hidden="true"><path d="M1 1h20M1 8h20M1 15h20" stroke="#1C1A17" stroke-width="1.6" stroke-linecap="round"/></svg>
     </button>
   </header>
@@ -396,8 +391,7 @@ const OPS = {
       categorie: db.categories.some(c => c.id === o.categorie) ? o.categorie : 'autres',
       style_fr: o.style_fr || '', style_he: o.style_he || '', style_en: o.style_en || '',
       phrase_fr: o.phrase_fr || '', phrase_he: o.phrase_he || '', phrase_en: o.phrase_en || '',
-      ingredients: o.ingredients || [],
-      couleur: /^#[0-9a-fA-F]{6}$/.test(o.couleur || '') ? o.couleur : '#D9A441' };
+      ingredients: o.ingredients || [] };
     if (!clean.nom) throw new Error('Le nom est obligatoire');
     if (!clean.ingredients.length) throw new Error('Ajoute au moins un ingrédient');
     const id = await mutate(d => {
@@ -484,7 +478,7 @@ function fmtDate(d){
   try { return new Date(d).toLocaleDateString(lang === 'he' ? 'he-IL' : lang === 'en' ? 'en-GB' : 'fr-FR', { day:'numeric', month:'long', year:'numeric' }); }
   catch(e){ return ''; }
 }
-const img = url => url ? `<img src="${esc(photoUrl(url))}" alt="" onload="this.classList.add('in')">` : '';
+const img = (url, alt) => url ? `<img src="${esc(photoUrl(url))}" alt="${esc(alt || '')}" onload="this.classList.add('in')">` : '';
 const thumbStyle = url => url ? `background-image:url('${esc(photoUrl(url))}')` : '';
 
 function toast(msg){
@@ -529,30 +523,19 @@ function render(id){
   if (id === 'about') renderAbout();
   if (id === 'manager') renderManager();
 }
-// Verre 3D (glass3d.js) : chargé à part ; s'il n'arrive pas, on masque simplement son emplacement.
-const SIGNATURE = '#EE9A7A';
-function glassAttach(el, opts){
-  if (!el) return;
-  window.__glassReq = { el, opts };
-  if (window.Glass) window.Glass.attach(el, opts);
-}
-setTimeout(() => { if (!window.Glass) document.body.classList.add('no3d'); }, 10000);
 function renderHome(){
   const cats = visibleCats();
-  const sig = pub.cocktails.find(c => c.id === 'ce_soir');
   $('#v-home').innerHTML = `
-    <div class="glass-slot rise" id="homeGlass"></div>
-    <div class="pad rise" style="--i:1;padding-top:6px"><p class="eyebrow">${BAR}</p><h1 class="h1 big">${t('choose')}</h1></div>
+    <div class="pad rise" style="padding-top:18px"><p class="eyebrow">${BAR}</p><h1 class="h1 big">${t('choose')}</h1></div>
     ${cats.length ? `<div class="grid">${cats.map((id, i) => `
       <button class="cat rise" style="--i:${i+1}" data-act="cat" data-id="${esc(id)}">
-        <div class="ph">${catPhoto(id) ? img(catPhoto(id)) : `<span class="ph-word">${esc(catLabel(id))}</span>`}</div>
+        <div class="ph">${catPhoto(id) ? img(catPhoto(id), catLabel(id)) : `<span class="ph-word">${esc(catLabel(id))}</span>`}</div>
         <span class="cat-name">${esc(catLabel(id))}</span>
       </button>`).join('')}</div>` : `<p class="empty rise">${t('empty')}</p>`}`;
-  glassAttach($('#homeGlass'), { color: (sig && sig.couleur) || SIGNATURE, fill: 0.82 });
 }
 function cocktailCard(c, i){
   return `<article class="ck rise" style="--i:${i}">
-    <div class="ph">${c.photo ? img(c.photo) : `<span class="ph-word">${esc(c.nom)}</span>`}</div>
+    <div class="ph">${c.photo ? img(c.photo, c.nom) : `<span class="ph-word">${esc(c.nom)}</span>`}</div>
     <div class="ck-head"><h2 class="ck-name">${esc(c.nom)}</h2><span class="ck-style">${esc(pick(c,'style'))}</span></div>
     ${pick(c,'phrase') ? `<p class="ck-phrase">${esc(pick(c,'phrase'))}</p>` : ''}
     <p class="ck-ing">${c.ingredients.map(r => esc(ingLabel(r))).join(' · ')}</p>
@@ -571,11 +554,9 @@ function renderSurprise(){
   const c = pool[Math.floor(Math.random() * pool.length)];
   lastSurprise = c.id;
   $('#v-surprise').innerHTML = `
-    <div class="glass-slot rise" id="surpriseGlass"></div>
-    <div class="pad rise" style="--i:1;padding-top:6px"><p class="eyebrow">${esc(catLabel(c.categorie))}</p><h1 class="h1 big">${t('surprise')}</h1></div>
-    <div class="list">${cocktailCard(c, 2)}</div>
-    <button class="again rise" style="--i:3" data-act="surprise-again">${t('another')}</button>`;
-  glassAttach($('#surpriseGlass'), { color: c.couleur || SIGNATURE, fill: 0.82, animate: true });
+    <div class="pad rise" style="padding-top:18px"><p class="eyebrow">${esc(catLabel(c.categorie))}</p><h1 class="h1 big">${t('surprise')}</h1></div>
+    <div class="list">${cocktailCard(c, 1)}</div>
+    <button class="again rise" style="--i:2" data-act="surprise-again">${t('another')}</button>`;
 }
 function renderGuestbook(){
   const v = $('#v-guestbook');
@@ -614,7 +595,7 @@ function renderAbout(){
   const a = ABOUT[lang] || ABOUT.fr, ph = pub.aboutPhoto;
   $('#v-about').innerHTML = `
     <div class="pad rise" style="padding-top:18px"><p class="eyebrow">${BAR}</p><h1 class="h1 big">${a.title}</h1></div>
-    ${ph ? `<div class="pad rise" style="--i:1;margin-top:24px"><div class="ph about-ph">${img(ph)}</div></div>` : ''}
+    ${ph ? `<div class="pad rise" style="--i:1;margin-top:24px"><div class="ph about-ph">${img(ph, 'David Kosman')}</div></div>` : ''}
     <div class="pad">${a.p.map((x, i) => `<p class="lead rise" style="--i:${i+2}">${x}</p>`).join('')}</div>`;
 }
 
@@ -647,8 +628,8 @@ function renderDrawer(){
       ${t('manager')}
     </button>`;
 }
-function openMenu(){ renderDrawer(); $('#veil').classList.add('on'); $('#drawer').classList.add('on'); }
-function closeMenu(){ $('#veil').classList.remove('on'); $('#drawer').classList.remove('on'); }
+function openMenu(){ renderDrawer(); $('#veil').classList.add('on'); $('#drawer').classList.add('on'); $('#menuBtn').setAttribute('aria-expanded','true'); }
+function closeMenu(){ $('#veil').classList.remove('on'); $('#drawer').classList.remove('on'); $('#menuBtn').setAttribute('aria-expanded','false'); }
 function setLang(l){
   lang = l; store.set('lang', l);
   document.documentElement.lang = l;
@@ -796,8 +777,6 @@ function cktSheet(c){
     <div class="field"><label for="f_nom">Nom</label><input class="input" id="f_nom" value="${esc(c.nom)}"></div>
     <div class="field"><label for="f_cat">Catégorie</label>
       <select class="input" id="f_cat">${admin.categories.map(k => `<option value="${esc(k.id)}" ${c.categorie===k.id?'selected':''}>${esc(k.nom_fr)}</option>`).join('')}</select></div>
-    <div class="field"><label for="f_couleur">Couleur du liquide (verre 3D)</label>
-      <input class="input" id="f_couleur" type="color" value="${esc(c.couleur || '#D9A441')}" style="height:52px;padding:6px"></div>
     <div class="field"><label for="f_style">Style</label><input class="input" id="f_style" placeholder="Frais · Acidulé" value="${esc(c.style_fr)}"></div>
     <div class="field"><label for="f_phrase">Phrase</label><textarea class="input" id="f_phrase">${esc(c.phrase_fr)}</textarea></div>
     <div class="field"><label>Ingrédients</label>
@@ -830,7 +809,7 @@ function catSheet(c){
 function cktFromForm(){
   const v = id => ($('#'+id) || {}).value || '';
   return Object.assign({}, edit.obj, {
-    nom: v('f_nom').trim(), categorie: v('f_cat'), couleur: v('f_couleur'),
+    nom: v('f_nom').trim(), categorie: v('f_cat'),
     style_fr: v('f_style'), phrase_fr: v('f_phrase'),
     style_he: v('f_style_he'), phrase_he: v('f_phrase_he'),
     style_en: v('f_style_en'), phrase_en: v('f_phrase_en'),
@@ -1101,6 +1080,5 @@ dragToClose($('#drawer'), 'x', () => $('#drawer').classList.contains('on'), clos
   setTimeout(() => $('#splash').classList.add('out'), 250);
 })();
 </script>
-<script type="module" src="glass3d.js"></script>
 </body>
 </html>
