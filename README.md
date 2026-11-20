@@ -3,41 +3,46 @@
 Carte des cocktails du mini-bar, pensée pour le téléphone.
 En ligne : https://dak302.github.io/au-bar-de-se-soir/
 
-## Comment ça marche
+## La stack
 
-Tout vit dans ce dépôt GitHub :
+Vite + React + TypeScript + Tailwind CSS v4 + shadcn (structure `components.json`, alias `@/`).
+GitHub Actions construit le site et le publie sur GitHub Pages à chaque changement sur `main`
+(`.github/workflows/deploy.yml`) ; réglage requis une fois : **Settings → Pages → Source : GitHub Actions**.
 
-| Fichier | Rôle |
+```bash
+npm install
+npm run dev      # site local
+npm run build    # dist/ (copie aussi data.json, photos/, icone.png)
+```
+
+## Où sont les choses
+
+| Chemin | Rôle |
 |---|---|
-| `index.html` | Tout le site (HTML + CSS + JS). |
-| `data.json` | Ingrédients, cocktails, catégories, photo About. Modifié par le Manager. |
-| `photos/` | Photos des cocktails, des catégories et de la page About. |
-| `icone.png` | Icône du site (onglet, écran d'accueil). |
-| `apps-script/Code.gs` | Uniquement pour le **Livre d'or** (les messages des invités restent dans un Google Sheet). |
+| `src/components/ui/` | Composants (chemin shadcn par défaut, alias `@/components/ui`). |
+| `src/components/ui/cocktail-pour.tsx` | Le verre qui se remplit : coupe, martini, tumbler, verre long, mug en cuivre ; liquides colorés, glaçons, garnitures. |
+| `src/components/ui/coffee-pour-menu.tsx` | Le composant d'origine (Aakash Mehra), gardé tel quel comme référence. |
+| `src/app/` | L'appli : vues, Manager, données, GitHub, Idées, traductions FR/HE/EN. |
+| `src/app/legacy.css` | Le style de la carte (beige, contours noirs, animations). |
+| `data.json` | Ingrédients (couleur du liquide comprise), cocktails (verre, glaçons, garniture, doses), catégories. Modifié par le Manager. |
+| `photos/`, `icone.png` | Photos et icône. |
+| `apps-script/Code.gs` | Uniquement pour le Livre d'or (Google Sheet). |
 
-- Un cocktail n'apparaît que si **tous** ses ingrédients sont disponibles. `cat:gin` = n'importe quelle bouteille de gin.
-- Le **Manager** (menu ≡ → Manager) enregistre directement dans `data.json` et `photos/`.
-  Les invités voient les changements environ 1 minute après (le temps que GitHub Pages republie).
+Pourquoi `src/components/ui` : c'est là que la CLI shadcn (`npx shadcn@latest add …`) pose les composants ;
+garder ce dossier permet d'en coller ou d'en ajouter d'autres sans rien régler.
 
-## Idées (TheCocktailDB)
+## Manager
 
-Manager → Cocktails → **Idées** : compare la base publique TheCocktailDB (~600 cocktails, en anglais,
-gratuite, sans clé) avec ton stock, et liste ce qui est faisable tout de suite ou à un ingrédient près.
-« Ajouter » pré-remplit la fiche. Les invités ne voient rien de cette partie.
+Menu ≡ → Manager → code + (la première fois sur l'appareil) une clé GitHub :
+github.com → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** →
+Only select repositories → `au-bar-de-se-soir` → Contents : **Read and write**.
+Chaque enregistrement est un commit sur `main` ; les invités le voient 1 à 2 minutes après (le temps de la publication).
 
-## Manager : clé GitHub
-
-La première fois sur un appareil, le Manager demande le code **et** une clé GitHub.
-Créer la clé : github.com → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate new token
-- Repository access : **Only select repositories** → `au-bar-de-se-soir`
-- Permissions → Repository permissions → **Contents : Read and write**
-- Expiration au choix (à la fin, le Manager redemandera une nouvelle clé).
-
-La clé reste enregistrée sur l'appareil ; bouton « Oublier la clé GitHub de cet appareil » en bas du Manager.
+Dans la fiche d'un cocktail : verre, glaçons, garniture, avec l'aperçu du verre. Les nouveaux cocktails
+calculent leur versement à partir des couleurs et doses de leurs ingrédients.
+Cocktails → **Idées** : ce que permet le stock, d'après TheCocktailDB.
 
 ## Livre d'or
 
-`apps-script/Code.gs` collé dans le projet Apps Script, déployé en Application Web
-(exécuter en tant que moi, accès tout le monde). Propriété du script `ADMIN_CODE` = code du Manager.
-L'adresse `/exec` du déploiement se met dans `GB_URL`, en haut du script de `index.html`.
-Tant que `GB_URL` est vide, le Livre d'or est masqué.
+`apps-script/Code.gs` dans un projet Apps Script déployé en Application Web ; son adresse `/exec`
+va dans `GB_URL` (`src/app/config.ts`). Vide : le Livre d'or est masqué.

@@ -1,3 +1,4 @@
 node_modules/
+dist/
 .claude/skills/design-taste-frontend/
 .taste-skill/

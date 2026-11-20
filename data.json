@@ -68,7 +68,10 @@
       "nom_fr": "Vodka Grey Goose",
       "nom_he": "וודקה גריי גוס",
       "nom_en": "Grey Goose Vodka",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#EEF0EC",
+      "opacite": 0.16,
+      "dose": 2
     },
     {
       "id": "gin_beefeater",
@@ -77,7 +80,10 @@
       "nom_fr": "Gin Beefeater",
       "nom_he": "ג'ין ביפיטר",
       "nom_en": "Beefeater Gin",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#EEF0EC",
+      "opacite": 0.16,
+      "dose": 2
     },
     {
       "id": "gin_thinker",
@@ -86,7 +92,10 @@
       "nom_fr": "Gin Thinker rosé",
       "nom_he": "ג'ין ת'ינקר רוזה",
       "nom_en": "Thinker Rosé Gin",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#F2C2C4",
+      "opacite": 0.38,
+      "dose": 2
     },
     {
       "id": "rhum_bacardi",
@@ -95,7 +104,10 @@
       "nom_fr": "Rhum Bacardi blanc",
       "nom_he": "רום בקרדי לבן",
       "nom_en": "Bacardi White Rum",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#F0ECE2",
+      "opacite": 0.16,
+      "dose": 2
     },
     {
       "id": "whisky_tamnavulin",
@@ -104,7 +116,10 @@
       "nom_fr": "Whisky Tamnavulin White Wine Cask",
       "nom_he": "ויסקי טמנבולין",
       "nom_en": "Tamnavulin White Wine Cask Whisky",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#D99A3E",
+      "opacite": 0.72,
+      "dose": 2
     },
     {
       "id": "cointreau",
@@ -113,7 +128,10 @@
       "nom_fr": "Cointreau",
       "nom_he": "קואנטרו",
       "nom_en": "Cointreau",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#F3F0E6",
+      "opacite": 0.18,
+      "dose": 1
     },
     {
       "id": "campari",
@@ -122,7 +140,10 @@
       "nom_fr": "Campari",
       "nom_he": "קמפרי",
       "nom_en": "Campari",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#C3202E",
+      "opacite": 0.88,
+      "dose": 1
     },
     {
       "id": "martini_rosso",
@@ -131,7 +152,10 @@
       "nom_fr": "Martini Rosso",
       "nom_he": "מרטיני רוסו",
       "nom_en": "Martini Rosso",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#6E1E16",
+      "opacite": 0.9,
+      "dose": 1
     },
     {
       "id": "liq_passion",
@@ -140,7 +164,10 @@
       "nom_fr": "Liqueur de fruit de la passion",
       "nom_he": "ליקר פסיפלורה",
       "nom_en": "Passion fruit liqueur",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#F2A93B",
+      "opacite": 0.78,
+      "dose": 1
     },
     {
       "id": "liq_fraise",
@@ -149,7 +176,10 @@
       "nom_fr": "Liqueur de fraise",
       "nom_he": "ליקר תות",
       "nom_en": "Strawberry liqueur",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#D63A4B",
+      "opacite": 0.82,
+      "dose": 1
     },
     {
       "id": "liq_amande",
@@ -158,7 +188,10 @@
       "nom_fr": "Liqueur d'amande",
       "nom_he": "ליקר שקדים",
       "nom_en": "Almond liqueur",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#B8732E",
+      "opacite": 0.78,
+      "dose": 1
     },
     {
       "id": "liq_chocolat",
@@ -167,7 +200,10 @@
       "nom_fr": "Liqueur de chocolat Mozart",
       "nom_he": "ליקר שוקולד מוצרט",
       "nom_en": "Mozart chocolate liqueur",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#4A2616",
+      "opacite": 0.95,
+      "dose": 1
     },
     {
       "id": "creme_pamplemousse",
@@ -176,7 +212,10 @@
       "nom_fr": "Crème de pamplemousse Védrenne",
       "nom_he": "קרם אשכולית ודרן",
       "nom_en": "Védrenne grapefruit liqueur",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#F0907A",
+      "opacite": 0.72,
+      "dose": 1
     },
     {
       "id": "liq_cafe",
@@ -185,7 +224,10 @@
       "nom_fr": "Liqueur de café",
       "nom_he": "ליקר קפה",
       "nom_en": "Coffee liqueur",
-      "dispo": false
+      "dispo": false,
+      "couleur": "#2B160C",
+      "opacite": 0.95,
+      "dose": 1
     },
     {
       "id": "sirop_sucre",
@@ -194,7 +236,10 @@
       "nom_fr": "Sirop de sucre demerara",
       "nom_he": "סירופ סוכר דמררה",
       "nom_en": "Demerara syrup",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#C98A3E",
+      "opacite": 0.55,
+      "dose": 0.5
     },
     {
       "id": "sirop_passion",
@@ -203,7 +248,10 @@
       "nom_fr": "Sirop de fruit de la passion",
       "nom_he": "סירופ פסיפלורה",
       "nom_en": "Passion fruit syrup",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#E8961E",
+      "opacite": 0.8,
+      "dose": 0.5
     },
     {
       "id": "miel",
@@ -212,7 +260,10 @@
       "nom_fr": "Miel",
       "nom_he": "דבש",
       "nom_en": "Honey",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#E0A33A",
+      "opacite": 0.78,
+      "dose": 0.5
     },
     {
       "id": "citron",
@@ -221,7 +272,10 @@
       "nom_fr": "Citron jaune",
       "nom_he": "לימון",
       "nom_en": "Lemon",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#EFE6A0",
+      "opacite": 0.42,
+      "dose": 1
     },
     {
       "id": "citron_vert",
@@ -230,7 +284,10 @@
       "nom_fr": "Citron vert",
       "nom_he": "ליים",
       "nom_en": "Lime",
-      "dispo": false
+      "dispo": false,
+      "couleur": "#D8E6A0",
+      "opacite": 0.42,
+      "dose": 1
     },
     {
       "id": "menthe",
@@ -239,7 +296,10 @@
       "nom_fr": "Menthe",
       "nom_he": "נענע",
       "nom_en": "Mint",
-      "dispo": true
+      "dispo": true,
+      "couleur": "",
+      "opacite": 0,
+      "dose": 0
     },
     {
       "id": "basilic",
@@ -248,7 +308,10 @@
       "nom_fr": "Basilic",
       "nom_he": "בזיליקום",
       "nom_en": "Basil",
-      "dispo": true
+      "dispo": true,
+      "couleur": "",
+      "opacite": 0,
+      "dose": 0
     },
     {
       "id": "ginger_beer",
@@ -257,7 +320,10 @@
       "nom_fr": "Ginger beer",
       "nom_he": "ג'ינג'ר בירה",
       "nom_en": "Ginger beer",
-      "dispo": true
+      "dispo": true,
+      "couleur": "#E7D7A0",
+      "opacite": 0.48,
+      "dose": 3
     },
     {
       "id": "eau_gazeuse",
@@ -266,7 +332,10 @@
       "nom_fr": "Eau gazeuse",
       "nom_he": "סודה",
       "nom_en": "Sparkling water",
-      "dispo": false
+      "dispo": false,
+      "couleur": "#EEF3F3",
+      "opacite": 0.1,
+      "dose": 3
     },
     {
       "id": "espresso",
@@ -275,7 +344,10 @@
       "nom_fr": "Espresso",
       "nom_he": "אספרסו",
       "nom_en": "Espresso",
-      "dispo": false
+      "dispo": false,
+      "couleur": "#2A170C",
+      "opacite": 0.95,
+      "dose": 1
     },
     {
       "id": "angostura",
@@ -284,7 +356,10 @@
       "nom_fr": "Angostura bitters",
       "nom_he": "אנגוסטורה ביטרס",
       "nom_en": "Angostura bitters",
-      "dispo": false
+      "dispo": false,
+      "couleur": "#5A1A10",
+      "opacite": 0.95,
+      "dose": 0.1
     }
   ],
   "cocktails": [
@@ -305,7 +380,18 @@
         "citron"
       ],
       "photo": "photos/passion_martini.jpg",
-      "ordre": 1
+      "ordre": 1,
+      "verre": "martini",
+      "glace": false,
+      "garniture": "none",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:vodka": 2,
+        "liq_passion": 1,
+        "sirop_passion": 0.5,
+        "citron": 0.75
+      }
     },
     {
       "id": "lemon_drop",
@@ -324,7 +410,18 @@
         "sirop_sucre"
       ],
       "photo": "photos/lemon_drop.jpg",
-      "ordre": 2
+      "ordre": 2,
+      "verre": "martini",
+      "glace": false,
+      "garniture": "lemon",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:vodka": 2,
+        "cointreau": 1,
+        "citron": 1,
+        "sirop_sucre": 0.5
+      }
     },
     {
       "id": "moscow_mule",
@@ -342,7 +439,17 @@
         "citron"
       ],
       "photo": "photos/moscow_mule.jpg",
-      "ordre": 3
+      "ordre": 3,
+      "verre": "copper-mug",
+      "glace": true,
+      "garniture": "lemon",
+      "mousse": 0,
+      "melange": 0.8,
+      "doses": {
+        "cat:vodka": 2,
+        "citron": 0.5,
+        "ginger_beer": 4
+      }
     },
     {
       "id": "strawberry_sour",
@@ -361,7 +468,18 @@
         "sirop_sucre"
       ],
       "photo": "photos/strawberry_sour.jpg",
-      "ordre": 4
+      "ordre": 4,
+      "verre": "coupe",
+      "glace": false,
+      "garniture": "none",
+      "mousse": 0.1,
+      "melange": 1,
+      "doses": {
+        "cat:vodka": 2,
+        "liq_fraise": 1,
+        "citron": 1,
+        "sirop_sucre": 0.5
+      }
     },
     {
       "id": "gimlet",
@@ -379,7 +497,17 @@
         "sirop_sucre"
       ],
       "photo": "photos/gimlet.jpg",
-      "ordre": 5
+      "ordre": 5,
+      "verre": "coupe",
+      "glace": false,
+      "garniture": "twist",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:gin": 2,
+        "citron": 1,
+        "sirop_sucre": 0.75
+      }
     },
     {
       "id": "negroni",
@@ -397,7 +525,17 @@
         "martini_rosso"
       ],
       "photo": "photos/negroni.jpg",
-      "ordre": 6
+      "ordre": 6,
+      "verre": "rocks",
+      "glace": true,
+      "garniture": "orange",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:gin": 1,
+        "campari": 1,
+        "martini_rosso": 1
+      }
     },
     {
       "id": "gin_basil_smash",
@@ -417,7 +555,18 @@
         "sirop_sucre"
       ],
       "photo": "photos/gin_basil_smash.jpg",
-      "ordre": 7
+      "ordre": 7,
+      "verre": "rocks",
+      "glace": true,
+      "garniture": "basil",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:gin": 2,
+        "citron": 1,
+        "creme_pamplemousse": 0.75,
+        "sirop_sucre": 0.5
+      }
     },
     {
       "id": "daiquiri",
@@ -435,7 +584,17 @@
         "sirop_sucre"
       ],
       "photo": "photos/daiquiri.jpg",
-      "ordre": 8
+      "ordre": 8,
+      "verre": "coupe",
+      "glace": false,
+      "garniture": "lemon",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:rhum": 2,
+        "citron": 1,
+        "sirop_sucre": 0.75
+      }
     },
     {
       "id": "strawberry_daiquiri",
@@ -454,7 +613,18 @@
         "sirop_sucre"
       ],
       "photo": "photos/strawberry_daiquiri.jpg",
-      "ordre": 9
+      "ordre": 9,
+      "verre": "coupe",
+      "glace": false,
+      "garniture": "none",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:rhum": 2,
+        "liq_fraise": 1,
+        "citron": 1,
+        "sirop_sucre": 0.5
+      }
     },
     {
       "id": "mai_tai",
@@ -474,7 +644,19 @@
         "sirop_sucre"
       ],
       "photo": "photos/mai_tai.jpg",
-      "ordre": 10
+      "ordre": 10,
+      "verre": "rocks",
+      "glace": true,
+      "garniture": "mint",
+      "mousse": 0,
+      "melange": 0.9,
+      "doses": {
+        "cat:rhum": 2,
+        "cointreau": 0.75,
+        "liq_amande": 0.75,
+        "citron": 1,
+        "sirop_sucre": 0.25
+      }
     },
     {
       "id": "mojito",
@@ -494,7 +676,18 @@
         "eau_gazeuse"
       ],
       "photo": "photos/mojito.jpg",
-      "ordre": 11
+      "ordre": 11,
+      "verre": "highball",
+      "glace": true,
+      "garniture": "mint",
+      "mousse": 0,
+      "melange": 0.7,
+      "doses": {
+        "cat:rhum": 2,
+        "citron": 1,
+        "sirop_sucre": 0.75,
+        "eau_gazeuse": 3
+      }
     },
     {
       "id": "godfather",
@@ -513,7 +706,18 @@
         "sirop_sucre"
       ],
       "photo": "photos/godfather.jpg",
-      "ordre": 12
+      "ordre": 12,
+      "verre": "rocks",
+      "glace": true,
+      "garniture": "twist",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:whisky": 2,
+        "liq_amande": 1,
+        "citron": 0.75,
+        "sirop_sucre": 0.25
+      }
     },
     {
       "id": "boulevardier",
@@ -531,7 +735,17 @@
         "martini_rosso"
       ],
       "photo": "photos/boulevardier.jpg",
-      "ordre": 13
+      "ordre": 13,
+      "verre": "rocks",
+      "glace": true,
+      "garniture": "orange",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:whisky": 1.5,
+        "campari": 1,
+        "martini_rosso": 1
+      }
     },
     {
       "id": "whisky_smash",
@@ -550,7 +764,17 @@
         "sirop_sucre"
       ],
       "photo": "photos/whisky_smash.jpg",
-      "ordre": 14
+      "ordre": 14,
+      "verre": "rocks",
+      "glace": true,
+      "garniture": "mint",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:whisky": 2,
+        "citron": 1,
+        "sirop_sucre": 0.75
+      }
     },
     {
       "id": "gold_rush",
@@ -570,7 +794,18 @@
         "menthe"
       ],
       "photo": "photos/gold_rush.jpg",
-      "ordre": 15
+      "ordre": 15,
+      "verre": "rocks",
+      "glace": true,
+      "garniture": "twist",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:whisky": 2,
+        "miel": 0.75,
+        "citron": 1,
+        "sirop_sucre": 0.25
+      }
     },
     {
       "id": "ce_soir",
@@ -589,7 +824,18 @@
         "miel"
       ],
       "photo": "",
-      "ordre": 16
+      "ordre": 16,
+      "verre": "coupe",
+      "glace": false,
+      "garniture": "orange",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:whisky": 2,
+        "creme_pamplemousse": 1,
+        "citron": 0.75,
+        "miel": 0.5
+      }
     },
     {
       "id": "manhattan",
@@ -606,7 +852,16 @@
         "martini_rosso"
       ],
       "photo": "",
-      "ordre": 17
+      "ordre": 17,
+      "verre": "coupe",
+      "glace": false,
+      "garniture": "cherry",
+      "mousse": 0,
+      "melange": 1,
+      "doses": {
+        "cat:whisky": 2,
+        "martini_rosso": 1
+      }
     }
   ]
 }

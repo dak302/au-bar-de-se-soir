@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "./app/legacy.css";
+
+/* shadcn tokens, mapped onto the bar's palette (beige + ink). */
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --color-muted-foreground: var(--mute);
+  --color-border: var(--line);
+  --font-serif: var(--serif);
+  --font-sans: var(--sans);
+}
+
+/* Page changes are animated by motion now (not by CSS transitions). */
+.view{transition:none}
