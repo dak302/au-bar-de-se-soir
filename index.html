@@ -178,9 +178,15 @@ summary::-webkit-details-marker{display:none}
 <div class="toast" id="toast"></div>
 <div class="splash" id="splash"><span>Au Bar de ce Soir</span></div>
 <script>
-/* Adresse de l'application Web Apps Script (se termine par /exec).
-   C'est la seule ligne à changer si l'adresse change un jour. */
-const API_URL = '';
+/* ================= RÉGLAGES ================= */
+// Dépôt GitHub qui contient data.json et les photos.
+const REPO = 'dak302/au-bar-de-se-soir';
+const BRANCH = 'main';
+// Livre d'or : adresse /exec de l'Apps Script (vide = Livre d'or masqué).
+const GB_URL = '';
+// Empreinte du code Manager (le code lui-même n'est pas écrit ici).
+const CODE_HASH = 'a7c48bbe65831d20d00165282cfa8d76c82cb4ecb90449a1b8bea19e31ada517';
+/* ============================================ */
 
 const BAR = 'Au Bar de ce Soir';
 const NOT_BASE = ['autres','sansalcool'];
@@ -218,19 +224,203 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
                 set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
-// Dans Apps Script : google.script.run. Sur GitHub : appel de l'API Apps Script.
-const IN_GAS = typeof google !== 'undefined' && google.script && google.script.run;
-async function run(fn, ...args){
-  if (IN_GAS) return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...args));
-  if (!API_URL) throw new Error('API_URL manquante');
-  const r = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ fn, args })
+/* ---------- Données (data.json sur GitHub) ---------- */
+let db = null, dbSha = null, ghToken = store.get('gh_token') || '', gbCache = [];
+const isOn = v => v === true || String(v).toUpperCase() === 'TRUE';
+const byOrder = (a, b) => (Number(a.ordre) || 0) - (Number(b.ordre) || 0);
+const clone = o => JSON.parse(JSON.stringify(o));
+
+// Adresse d'une photo. Dans le Manager on lit directement GitHub (visible tout de suite).
+function photoUrl(p){
+  if (!p) return '';
+  if (/^(https?:|data:)/.test(p)) return p;
+  return admin ? `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${p}` : p;
+}
+function missing(c, ings){
+  return (c.ingredients || []).filter(r => {
+    if (r.indexOf('cat:') === 0){ const b = r.slice(4); return !ings.some(i => i.base === b && isOn(i.dispo)); }
+    const i = ings.find(x => x.id === r); return !(i && isOn(i.dispo));
   });
+}
+function computePub(d){
+  const visible = d.cocktails.filter(c => !missing(c, d.ingredients).length).sort(byOrder);
+  const labels = {};
+  visible.forEach(c => c.ingredients.forEach(r => {
+    if (r.indexOf('cat:') === 0 || labels[r]) return;
+    const i = d.ingredients.find(x => x.id === r);
+    if (i) labels[r] = { fr: i.nom_fr, he: i.nom_he, en: i.nom_en };
+  }));
+  return { categories: d.categories.slice().sort(byOrder), aboutPhoto: (d.about || {}).photo || '', cocktails: visible, labels };
+}
+function computeAdmin(){
+  const ings = db.ingredients.map(i => Object.assign({}, i, { dispo: isOn(i.dispo) }));
+  return {
+    ingredients: ings,
+    cocktails: db.cocktails.slice().sort(byOrder).map(c => Object.assign({}, c, { manque: missing(c, ings) })),
+    categories: db.categories.slice().sort(byOrder),
+    aboutPhoto: (db.about || {}).photo || '',
+    guestbook: gbCache
+  };
+}
+async function loadPublic(){
+  const r = await fetch('data.json?t=' + Date.now(), { cache: 'no-store' });
+  if (!r.ok) throw new Error('data.json introuvable');
+  db = await r.json(); return computePub(db);
+}
+
+/* ---------- GitHub (Manager) ---------- */
+function b64enc(str){
+  const bytes = new TextEncoder().encode(str); let s = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+const b64dec = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, '')), c => c.charCodeAt(0)));
+async function gh(path, opts){
+  opts = opts || {};
+  const r = await fetch(`https://api.github.com/repos/${REPO}${path}`, Object.assign({}, opts, { headers: {
+    Authorization: 'Bearer ' + ghToken, Accept: 'application/vnd.github+json',
+    'Content-Type': 'application/json' } }));
+  if (!r.ok){
+    const j = await r.json().catch(() => ({}));
+    const e = new Error(r.status === 401 ? 'Clé GitHub refusée ou expirée' : (j.message || 'GitHub ' + r.status));
+    e.status = r.status; throw e;
+  }
+  return r.status === 204 ? null : r.json();
+}
+async function loadAdminDb(){
+  const j = await gh(`/contents/data.json?ref=${BRANCH}&t=${Date.now()}`);
+  db = JSON.parse(b64dec(j.content)); dbSha = j.sha;
+}
+async function putDb(d, msg){
+  const r = await gh('/contents/data.json', { method: 'PUT', body: JSON.stringify({
+    message: msg, branch: BRANCH, sha: dbSha, content: b64enc(JSON.stringify(d, null, 2) + '\n') }) });
+  dbSha = r.content.sha;
+}
+// Les modifications passent une par une, et se rejouent si GitHub a changé entre-temps.
+let queue = Promise.resolve();
+function mutate(fn, msg){
+  const job = queue.then(async () => {
+    let draft = clone(db), res = fn(draft);
+    try { await putDb(draft, msg); }
+    catch(e){
+      if (e.status !== 409 && e.status !== 422) throw e;
+      await loadAdminDb(); draft = clone(db); res = fn(draft); await putDb(draft, msg);
+    }
+    db = draft; pub = computePub(db); return res;
+  });
+  queue = job.catch(() => {});
+  return job;
+}
+function newId(text){
+  const base = String(text || 'x').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 24) || 'x';
+  return base + '_' + Math.random().toString(36).slice(2, 6);
+}
+async function sha256(s){
+  const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(s)));
+  return Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+/* ---------- Livre d'or (Apps Script) ---------- */
+async function gbCall(fn, ...args){
+  if (!GB_URL) throw new Error("Livre d'or non relié");
+  const r = await fetch(GB_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args }) });
   const j = await r.json();
   if (!j.ok) throw new Error(j.error || 'Erreur');
   return j.data;
+}
+
+/* ---------- Actions ---------- */
+const OPS = {
+  getPublicData: () => loadPublic(),
+  getGuestbook: () => gbCall('getGuestbook'),
+  addGuestMessage: (n, m) => gbCall('addGuestMessage', n, m),
+  async getAdminData(){
+    await loadAdminDb();
+    try { gbCache = GB_URL ? await gbCall('getGuestbook') : []; } catch(e){ gbCache = []; }
+    pub = computePub(db); return computeAdmin();
+  },
+  async setIngredientDispo(_, id, on){
+    await mutate(d => { const i = d.ingredients.find(x => x.id === id); if (i) i.dispo = !!on; }, (on ? 'Dispo : ' : 'Plus dispo : ') + id);
+    return computeAdmin();
+  },
+  async saveIngredient(_, o){
+    const clean = { groupe: o.groupe || 'frais', base: o.groupe === 'alcool' ? (o.base || '') : '',
+      nom_fr: String(o.nom_fr || '').trim(), nom_he: String(o.nom_he || '').trim(), nom_en: String(o.nom_en || '').trim(), dispo: !!o.dispo };
+    if (!clean.nom_fr) throw new Error('Le nom est obligatoire');
+    await mutate(d => { const ex = o.id && d.ingredients.find(x => x.id === o.id);
+      if (ex) Object.assign(ex, clean); else d.ingredients.push(Object.assign({ id: newId(clean.nom_fr) }, clean)); }, 'Ingrédient : ' + clean.nom_fr);
+    return computeAdmin();
+  },
+  async deleteIngredient(_, id){
+    const usedBy = db.cocktails.filter(c => c.ingredients.indexOf(id) !== -1).map(c => c.nom);
+    if (usedBy.length) return { ok: false, usedBy, data: computeAdmin() };
+    await mutate(d => { d.ingredients = d.ingredients.filter(x => x.id !== id); }, 'Suppression ingrédient : ' + id);
+    return { ok: true, data: computeAdmin() };
+  },
+  async saveCocktail(_, o){
+    const clean = { nom: String(o.nom || '').trim(),
+      categorie: db.categories.some(c => c.id === o.categorie) ? o.categorie : 'autres',
+      style_fr: o.style_fr || '', style_he: o.style_he || '', style_en: o.style_en || '',
+      phrase_fr: o.phrase_fr || '', phrase_he: o.phrase_he || '', phrase_en: o.phrase_en || '',
+      ingredients: o.ingredients || [] };
+    if (!clean.nom) throw new Error('Le nom est obligatoire');
+    if (!clean.ingredients.length) throw new Error('Ajoute au moins un ingrédient');
+    const id = await mutate(d => {
+      const ex = o.id && d.cocktails.find(x => x.id === o.id);
+      if (ex){ Object.assign(ex, clean); return ex.id; }
+      const nid = newId(clean.nom), max = d.cocktails.reduce((m, c) => Math.max(m, Number(c.ordre) || 0), 0);
+      d.cocktails.push(Object.assign({ id: nid, photo: '', ordre: max + 1 }, clean)); return nid;
+    }, 'Cocktail : ' + clean.nom);
+    return { id, data: computeAdmin() };
+  },
+  async deleteCocktail(_, id){
+    await mutate(d => { d.cocktails = d.cocktails.filter(x => x.id !== id); }, 'Suppression cocktail : ' + id);
+    return computeAdmin();
+  },
+  async saveCategory(_, o){
+    const clean = { nom_fr: String(o.nom_fr || '').trim(), nom_he: String(o.nom_he || '').trim(), nom_en: String(o.nom_en || '').trim() };
+    if (!clean.nom_fr) throw new Error('Le nom est obligatoire');
+    const id = await mutate(d => {
+      const ex = o.id && d.categories.find(x => x.id === o.id);
+      if (ex){ Object.assign(ex, clean); return ex.id; }
+      const nid = newId(clean.nom_fr), max = d.categories.reduce((m, c) => Math.max(m, Number(c.ordre) || 0), 0);
+      d.categories.push(Object.assign({ id: nid, photo: '', ordre: max + 1 }, clean)); return nid;
+    }, 'Catégorie : ' + clean.nom_fr);
+    return { id, data: computeAdmin() };
+  },
+  async deleteCategory(_, id){
+    const usedBy = db.cocktails.filter(c => c.categorie === id).map(c => c.nom)
+      .concat(db.ingredients.filter(i => i.base === id).map(i => i.nom_fr));
+    if (usedBy.length) return { ok: false, usedBy, data: computeAdmin() };
+    await mutate(d => { d.categories = d.categories.filter(x => x.id !== id); }, 'Suppression catégorie : ' + id);
+    return { ok: true, data: computeAdmin() };
+  },
+  async deleteGuestMessage(c, id){
+    gbCache = await gbCall('deleteGuestMessage', c, id);
+    return computeAdmin();
+  },
+  async uploadPhoto(_, kind, id, dataUrl){
+    const path = `photos/${kind === 'categorie' ? (id === 'about' ? 'about' : 'cat_' + id) : id}_${Date.now().toString(36)}.jpg`;
+    await gh('/contents/' + path, { method: 'PUT', body: JSON.stringify({
+      message: 'Photo : ' + id, branch: BRANCH, content: String(dataUrl).split(',')[1] }) });
+    let old = '';
+    await mutate(d => {
+      if (kind === 'categorie' && id === 'about'){ d.about = d.about || {}; old = d.about.photo; d.about.photo = path; return; }
+      const row = (kind === 'categorie' ? d.categories : d.cocktails).find(x => x.id === id);
+      if (row){ old = row.photo; row.photo = path; }
+    }, 'Photo : ' + id);
+    // Ancienne photo : supprimée du dépôt (sans bloquer si ça échoue).
+    if (old && old !== path && !/^https?:/.test(old)){
+      try { const f = await gh(`/contents/${old}?ref=${BRANCH}`);
+        await gh('/contents/' + old, { method: 'DELETE', body: JSON.stringify({ message: 'Ancienne photo : ' + id, sha: f.sha, branch: BRANCH }) });
+      } catch(e){}
+    }
+    return computeAdmin();
+  }
+};
+function run(fn, ...args){
+  try { return Promise.resolve(OPS[fn](...args)); } catch(e){ return Promise.reject(e); }
 }
 
 let lang = store.get('lang') || 'fr';
@@ -260,8 +450,8 @@ function fmtDate(d){
   try { return new Date(d).toLocaleDateString(lang === 'he' ? 'he-IL' : lang === 'en' ? 'en-GB' : 'fr-FR', { day:'numeric', month:'long', year:'numeric' }); }
   catch(e){ return ''; }
 }
-const img = url => url ? `<img src="${esc(url)}" alt="" onload="this.classList.add('in')">` : '';
-const thumbStyle = url => url ? `background-image:url('${esc(url)}')` : '';
+const img = url => url ? `<img src="${esc(photoUrl(url))}" alt="" onload="this.classList.add('in')">` : '';
+const thumbStyle = url => url ? `background-image:url('${esc(photoUrl(url))}')` : '';
 
 function toast(msg){
   const el = $('#toast'); el.textContent = msg; el.classList.add('on');
@@ -398,7 +588,7 @@ function renderDrawer(){
     </div>
     <div class="d-sep"></div>
     <button class="d-big" data-act="surprise">${t('surprise')}</button>
-    <button class="d-big" data-act="guestbook">${t('guestbook')}</button>
+    ${GB_URL ? `<button class="d-big" data-act="guestbook">${t('guestbook')}</button>` : ''}
     <button class="d-big" data-act="about">${t('about')}</button>
     <div style="flex:1;min-height:20px"></div>
     <p class="eyebrow" style="margin-bottom:10px">${t('lang')}</p>
@@ -430,6 +620,8 @@ function renderManager(){
         <form id="loginForm" style="margin-top:28px">
           <div class="field"><label for="code">Code d'accès</label>
             <input class="input" id="code" type="password" inputmode="numeric" autocomplete="off"></div>
+          ${ghToken ? '' : `<div class="field"><label for="ghkey">Clé GitHub (une seule fois sur cet appareil)</label>
+            <input class="input" id="ghkey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_…"></div>`}
           <button class="btn full" style="margin-top:18px" type="submit">Entrer</button>
           <p class="err" id="loginErr"></p>
         </form>
@@ -447,7 +639,9 @@ function renderManager(){
       <div class="pad" style="padding-top:18px"><h1 class="h1 big">Manager</h1></div>
       <div class="seg tabs">${tabs.map(([k,l]) => `<button data-act="tab" data-tab="${k}" aria-pressed="${tab===k}">${l}</button>`).join('')}</div>
       ${body}
+      <p class="row-sub" style="text-align:center;margin:26px 24px 0;white-space:normal">Les invités voient les changements environ 1 minute après.</p>
       <button class="logout" data-act="logout">Quitter le Manager</button>
+      <button class="logout" style="margin-top:0" data-act="forget">Oublier la clé GitHub de cet appareil</button>
     </div>`;
 }
 const none = `<div class="row"><span class="row-sub">Aucun</span></div>`;
@@ -501,6 +695,7 @@ function renderCatTab(){
 }
 function renderGbTab(){
   const g = admin.guestbook;
+  if (!GB_URL) return `<div class="sec"><h3>Livre d'or</h3></div><div class="box"><div class="row"><span class="row-sub">Pas encore relié.</span></div></div>`;
   return `<div class="sec"><h3>Messages · ${g.length}</h3></div>
     <div class="box">${g.length ? g.map(m => `<div class="row">
       <span class="row-wrap"><strong>${esc(m.nom || 'Anonyme')}</strong> · <span style="color:var(--mute)">${esc(fmtDate(m.date))}</span>\n${esc(m.message)}</span>
@@ -594,7 +789,8 @@ function cktFromForm(){
   });
 }
 
-async function refreshPub(){ try { pub = await run('getPublicData'); } catch(e){} }
+// Dans le Manager, la carte est recalculée depuis la version GitHub (jamais rechargée depuis le site, qui a ~1 min de retard).
+async function refreshPub(){ if (db) pub = computePub(db); }
 function sheetErr(msg){ const el = $('#sheetErr'); if (el) el.textContent = msg; }
 const errMsg = e => (e && e.message ? e.message : String(e)).replace(/^Error:\s*/, '');
 async function busy(btn, fn){
@@ -633,7 +829,7 @@ $('#file').addEventListener('change', async e => {
     await refreshPub();
     if (target.kind === 'cocktail' && edit && edit.type === 'ckt'){
       const c = admin.cocktails.find(x => x.id === target.id);
-      if (c){ edit.obj.photo = c.photo; const th = $('#f_thumb'); if (th) th.style.backgroundImage = `url('${c.photo}')`; }
+      if (c){ edit.obj.photo = c.photo; const th = $('#f_thumb'); if (th) th.style.backgroundImage = `url('${photoUrl(c.photo)}')`; }
     }
     renderManager(); toast('Photo enregistrée');
   } catch(err){ toast('Échec : ' + errMsg(err)); }
@@ -666,6 +862,10 @@ document.addEventListener('click', async e => {
     case 'manager': goFromMenu('manager'); break;
     case 'tab': tab = el.dataset.tab; renderManager(); break;
     case 'logout': admin = null; code = null; renderManager(); goHome(); break;
+    case 'forget':
+      if (!armed(el, 'Sûr ? Touche encore')) return;
+      ghToken = ''; try { localStorage.removeItem('gh_token'); } catch(e){}
+      admin = null; code = null; renderManager(); goHome(); toast('Clé oubliée'); break;
 
     case 'ing-toggle': {
       const i = admin.ingredients.find(x => x.id === id); if (!i) return;
@@ -757,11 +957,26 @@ document.addEventListener('submit', async e => {
   if (form.id === 'loginForm'){
     const input = $('#code');
     busy(btn, async () => {
+      const err = $('#loginErr');
       try {
-        const ok = await run('adminLogin', input.value);
-        if (!ok){ $('#loginErr').textContent = 'Code incorrect'; form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake'); input.value=''; return; }
-        code = input.value; admin = await run('getAdminData', code); tab = 'ing'; renderManager();
-      } catch(err){ const m = errMsg(err); $('#loginErr').textContent = /ADMIN_CODE/.test(m) ? m : t('error'); }
+        if (await sha256(input.value.trim()) !== CODE_HASH){ err.textContent = 'Code incorrect'; form.classList.remove('shake'); void form.offsetWidth; form.classList.add('shake'); input.value=''; return; }
+        const keyInput = $('#ghkey');
+        if (keyInput){
+          const k = keyInput.value.trim();
+          if (!k){ err.textContent = 'Colle ta clé GitHub'; return; }
+          ghToken = k;
+          const repo = await gh('');
+          if (!repo.permissions || !repo.permissions.push){ ghToken = ''; err.textContent = "Cette clé ne peut pas modifier le dépôt"; return; }
+          store.set('gh_token', k);
+        }
+        code = input.value.trim();
+        admin = {}; // passe les photos en lecture directe GitHub
+        admin = await run('getAdminData', code); tab = 'ing'; renderManager();
+      } catch(e){
+        admin = null;
+        if (e.status === 401){ ghToken = ''; try { localStorage.removeItem('gh_token'); } catch(_){} renderManager(); $('#loginErr').textContent = 'Clé GitHub refusée ou expirée. Colle une nouvelle clé.'; return; }
+        err.textContent = errMsg(e) || t('error');
+      }
     });
   }
   if (form.id === 'gbForm'){

@@ -1,0 +1,612 @@
+{
+  "about": {
+    "photo": "photos/about.jpg"
+  },
+  "categories": [
+    {
+      "id": "vodka",
+      "nom_fr": "Vodka",
+      "nom_he": "וודקה",
+      "nom_en": "Vodka",
+      "ordre": 1,
+      "photo": "photos/cat_vodka.jpg"
+    },
+    {
+      "id": "gin",
+      "nom_fr": "Gin",
+      "nom_he": "ג'ין",
+      "nom_en": "Gin",
+      "ordre": 2,
+      "photo": "photos/cat_gin.jpg"
+    },
+    {
+      "id": "tequila",
+      "nom_fr": "Tequila",
+      "nom_he": "טקילה",
+      "nom_en": "Tequila",
+      "ordre": 3,
+      "photo": ""
+    },
+    {
+      "id": "rhum",
+      "nom_fr": "Rhum",
+      "nom_he": "רום",
+      "nom_en": "Rum",
+      "ordre": 4,
+      "photo": "photos/cat_rhum.jpg"
+    },
+    {
+      "id": "whisky",
+      "nom_fr": "Whisky",
+      "nom_he": "ויסקי",
+      "nom_en": "Whisky",
+      "ordre": 5,
+      "photo": "photos/cat_whisky.jpg"
+    },
+    {
+      "id": "autres",
+      "nom_fr": "Autres",
+      "nom_he": "אחרים",
+      "nom_en": "Others",
+      "ordre": 6,
+      "photo": ""
+    },
+    {
+      "id": "sansalcool",
+      "nom_fr": "Mocktail",
+      "nom_he": "מוקטייל",
+      "nom_en": "Mocktail",
+      "ordre": 7,
+      "photo": ""
+    }
+  ],
+  "ingredients": [
+    {
+      "id": "vodka_greygoose",
+      "groupe": "alcool",
+      "base": "vodka",
+      "nom_fr": "Vodka Grey Goose",
+      "nom_he": "וודקה גריי גוס",
+      "nom_en": "Grey Goose Vodka",
+      "dispo": true
+    },
+    {
+      "id": "gin_beefeater",
+      "groupe": "alcool",
+      "base": "gin",
+      "nom_fr": "Gin Beefeater",
+      "nom_he": "ג'ין ביפיטר",
+      "nom_en": "Beefeater Gin",
+      "dispo": true
+    },
+    {
+      "id": "gin_thinker",
+      "groupe": "alcool",
+      "base": "gin",
+      "nom_fr": "Gin Thinker rosé",
+      "nom_he": "ג'ין ת'ינקר רוזה",
+      "nom_en": "Thinker Rosé Gin",
+      "dispo": true
+    },
+    {
+      "id": "rhum_bacardi",
+      "groupe": "alcool",
+      "base": "rhum",
+      "nom_fr": "Rhum Bacardi blanc",
+      "nom_he": "רום בקרדי לבן",
+      "nom_en": "Bacardi White Rum",
+      "dispo": true
+    },
+    {
+      "id": "whisky_tamnavulin",
+      "groupe": "alcool",
+      "base": "whisky",
+      "nom_fr": "Whisky Tamnavulin White Wine Cask",
+      "nom_he": "ויסקי טמנבולין",
+      "nom_en": "Tamnavulin White Wine Cask Whisky",
+      "dispo": true
+    },
+    {
+      "id": "cointreau",
+      "groupe": "liqueur",
+      "base": "",
+      "nom_fr": "Cointreau",
+      "nom_he": "קואנטרו",
+      "nom_en": "Cointreau",
+      "dispo": true
+    },
+    {
+      "id": "campari",
+      "groupe": "liqueur",
+      "base": "",
+      "nom_fr": "Campari",
+      "nom_he": "קמפרי",
+      "nom_en": "Campari",
+      "dispo": true
+    },
+    {
+      "id": "martini_rosso",
+      "groupe": "liqueur",
+      "base": "",
+      "nom_fr": "Martini Rosso",
+      "nom_he": "מרטיני רוסו",
+      "nom_en": "Martini Rosso",
+      "dispo": true
+    },
+    {
+      "id": "liq_passion",
+      "groupe": "liqueur",
+      "base": "",
+      "nom_fr": "Liqueur de fruit de la passion",
+      "nom_he": "ליקר פסיפלורה",
+      "nom_en": "Passion fruit liqueur",
+      "dispo": true
+    },
+    {
+      "id": "liq_fraise",
+      "groupe": "liqueur",
+      "base": "",
+      "nom_fr": "Liqueur de fraise",
+      "nom_he": "ליקר תות",
+      "nom_en": "Strawberry liqueur",
+      "dispo": true
+    },
+    {
+      "id": "liq_amande",
+      "groupe": "liqueur",
+      "base": "",
+      "nom_fr": "Liqueur d'amande",
+      "nom_he": "ליקר שקדים",
+      "nom_en": "Almond liqueur",
+      "dispo": true
+    },
+    {
+      "id": "liq_chocolat",
+      "groupe": "liqueur",
+      "base": "",
+      "nom_fr": "Liqueur de chocolat Mozart",
+      "nom_he": "ליקר שוקולד מוצרט",
+      "nom_en": "Mozart chocolate liqueur",
+      "dispo": true
+    },
+    {
+      "id": "creme_pamplemousse",
+      "groupe": "liqueur",
+      "base": "",
+      "nom_fr": "Crème de pamplemousse Védrenne",
+      "nom_he": "קרם אשכולית ודרן",
+      "nom_en": "Védrenne grapefruit liqueur",
+      "dispo": true
+    },
+    {
+      "id": "liq_cafe",
+      "groupe": "liqueur",
+      "base": "",
+      "nom_fr": "Liqueur de café",
+      "nom_he": "ליקר קפה",
+      "nom_en": "Coffee liqueur",
+      "dispo": false
+    },
+    {
+      "id": "sirop_sucre",
+      "groupe": "sirop",
+      "base": "",
+      "nom_fr": "Sirop de sucre demerara",
+      "nom_he": "סירופ סוכר דמררה",
+      "nom_en": "Demerara syrup",
+      "dispo": true
+    },
+    {
+      "id": "sirop_passion",
+      "groupe": "sirop",
+      "base": "",
+      "nom_fr": "Sirop de fruit de la passion",
+      "nom_he": "סירופ פסיפלורה",
+      "nom_en": "Passion fruit syrup",
+      "dispo": true
+    },
+    {
+      "id": "miel",
+      "groupe": "sirop",
+      "base": "",
+      "nom_fr": "Miel",
+      "nom_he": "דבש",
+      "nom_en": "Honey",
+      "dispo": true
+    },
+    {
+      "id": "citron",
+      "groupe": "frais",
+      "base": "",
+      "nom_fr": "Citron jaune",
+      "nom_he": "לימון",
+      "nom_en": "Lemon",
+      "dispo": true
+    },
+    {
+      "id": "citron_vert",
+      "groupe": "frais",
+      "base": "",
+      "nom_fr": "Citron vert",
+      "nom_he": "ליים",
+      "nom_en": "Lime",
+      "dispo": false
+    },
+    {
+      "id": "menthe",
+      "groupe": "frais",
+      "base": "",
+      "nom_fr": "Menthe",
+      "nom_he": "נענע",
+      "nom_en": "Mint",
+      "dispo": true
+    },
+    {
+      "id": "basilic",
+      "groupe": "frais",
+      "base": "",
+      "nom_fr": "Basilic",
+      "nom_he": "בזיליקום",
+      "nom_en": "Basil",
+      "dispo": true
+    },
+    {
+      "id": "ginger_beer",
+      "groupe": "frais",
+      "base": "",
+      "nom_fr": "Ginger beer",
+      "nom_he": "ג'ינג'ר בירה",
+      "nom_en": "Ginger beer",
+      "dispo": true
+    },
+    {
+      "id": "eau_gazeuse",
+      "groupe": "frais",
+      "base": "",
+      "nom_fr": "Eau gazeuse",
+      "nom_he": "סודה",
+      "nom_en": "Sparkling water",
+      "dispo": false
+    },
+    {
+      "id": "espresso",
+      "groupe": "frais",
+      "base": "",
+      "nom_fr": "Espresso",
+      "nom_he": "אספרסו",
+      "nom_en": "Espresso",
+      "dispo": false
+    },
+    {
+      "id": "angostura",
+      "groupe": "bitters",
+      "base": "",
+      "nom_fr": "Angostura bitters",
+      "nom_he": "אנגוסטורה ביטרס",
+      "nom_en": "Angostura bitters",
+      "dispo": false
+    }
+  ],
+  "cocktails": [
+    {
+      "id": "passion_martini",
+      "nom": "Passion Martini",
+      "categorie": "vodka",
+      "style_fr": "Fruité · Exotique",
+      "style_he": "פירותי · אקזוטי",
+      "style_en": "Fruity · Exotic",
+      "phrase_fr": "Velouté et ensoleillé, le fruit de la passion à son meilleur.",
+      "phrase_he": "קטיפתי ושמשי, פסיפלורה במיטבה.",
+      "phrase_en": "Silky and sunny, passion fruit at its best.",
+      "ingredients": [
+        "cat:vodka",
+        "liq_passion",
+        "sirop_passion",
+        "citron"
+      ],
+      "photo": "photos/passion_martini.jpg",
+      "ordre": 1
+    },
+    {
+      "id": "lemon_drop",
+      "nom": "Lemon Drop",
+      "categorie": "vodka",
+      "style_fr": "Acidulé · Vif",
+      "style_he": "חמצמץ · רענן",
+      "style_en": "Tart · Bright",
+      "phrase_fr": "Le citron dans sa version la plus élégante.",
+      "phrase_he": "לימון בגרסה הכי אלגנטית שלו.",
+      "phrase_en": "Lemon at its most elegant.",
+      "ingredients": [
+        "cat:vodka",
+        "cointreau",
+        "citron",
+        "sirop_sucre"
+      ],
+      "photo": "photos/lemon_drop.jpg",
+      "ordre": 2
+    },
+    {
+      "id": "moscow_mule",
+      "nom": "Moscow Mule",
+      "categorie": "vodka",
+      "style_fr": "Frais · Épicé",
+      "style_he": "רענן · חריף",
+      "style_en": "Fresh · Spicy",
+      "phrase_fr": "Le piquant du gingembre, servi bien frais.",
+      "phrase_he": "העוקץ של הג'ינג'ר, מוגש קר.",
+      "phrase_en": "Ginger's kick, served ice-cold.",
+      "ingredients": [
+        "cat:vodka",
+        "ginger_beer",
+        "citron"
+      ],
+      "photo": "photos/moscow_mule.jpg",
+      "ordre": 3
+    },
+    {
+      "id": "strawberry_sour",
+      "nom": "Strawberry Sour",
+      "categorie": "vodka",
+      "style_fr": "Fruité · Acidulé",
+      "style_he": "פירותי · חמצמץ",
+      "style_en": "Fruity · Tart",
+      "phrase_fr": "La fraise, relevée d'une pointe d'acidité.",
+      "phrase_he": "תות, עם נגיעה חמצמצה.",
+      "phrase_en": "Strawberry, lifted by a bright sour edge.",
+      "ingredients": [
+        "cat:vodka",
+        "liq_fraise",
+        "citron",
+        "sirop_sucre"
+      ],
+      "photo": "photos/strawberry_sour.jpg",
+      "ordre": 4
+    },
+    {
+      "id": "gimlet",
+      "nom": "Gimlet",
+      "categorie": "gin",
+      "style_fr": "Frais · Acidulé",
+      "style_he": "רענן · חמצמץ",
+      "style_en": "Fresh · Tart",
+      "phrase_fr": "Net, vif, intemporel.",
+      "phrase_he": "נקי, חד, על-זמני.",
+      "phrase_en": "Crisp, sharp, timeless.",
+      "ingredients": [
+        "cat:gin",
+        "citron",
+        "sirop_sucre"
+      ],
+      "photo": "photos/gimlet.jpg",
+      "ordre": 5
+    },
+    {
+      "id": "negroni",
+      "nom": "Negroni",
+      "categorie": "gin",
+      "style_fr": "Amer · Intense",
+      "style_he": "מריר · עוצמתי",
+      "style_en": "Bitter · Bold",
+      "phrase_fr": "Trois ingrédients, un classique absolu.",
+      "phrase_he": "שלושה מרכיבים, קלאסיקה מוחלטת.",
+      "phrase_en": "Three ingredients, one absolute classic.",
+      "ingredients": [
+        "cat:gin",
+        "campari",
+        "martini_rosso"
+      ],
+      "photo": "photos/negroni.jpg",
+      "ordre": 6
+    },
+    {
+      "id": "gin_basil_smash",
+      "nom": "Gin Basil Smash",
+      "categorie": "gin",
+      "style_fr": "Herbacé · Frais",
+      "style_he": "עשבוני · רענן",
+      "style_en": "Herbal · Fresh",
+      "phrase_fr": "Basilic et pamplemousse, en parfait équilibre.",
+      "phrase_he": "בזיליקום ואשכולית באיזון מושלם.",
+      "phrase_en": "Basil and grapefruit in perfect balance.",
+      "ingredients": [
+        "cat:gin",
+        "basilic",
+        "citron",
+        "creme_pamplemousse",
+        "sirop_sucre"
+      ],
+      "photo": "photos/gin_basil_smash.jpg",
+      "ordre": 7
+    },
+    {
+      "id": "daiquiri",
+      "nom": "Daiquiri",
+      "categorie": "rhum",
+      "style_fr": "Frais · Équilibré",
+      "style_he": "רענן · מאוזן",
+      "style_en": "Fresh · Balanced",
+      "phrase_fr": "La simplicité parfaite du rhum blanc.",
+      "phrase_he": "הפשטות המושלמת של רום לבן.",
+      "phrase_en": "White rum in perfect simplicity.",
+      "ingredients": [
+        "cat:rhum",
+        "citron",
+        "sirop_sucre"
+      ],
+      "photo": "photos/daiquiri.jpg",
+      "ordre": 8
+    },
+    {
+      "id": "strawberry_daiquiri",
+      "nom": "Strawberry Daiquiri",
+      "categorie": "rhum",
+      "style_fr": "Fruité · Gourmand",
+      "style_he": "פירותי · מפנק",
+      "style_en": "Fruity · Indulgent",
+      "phrase_fr": "L'été dans un verre.",
+      "phrase_he": "קיץ בכוס.",
+      "phrase_en": "Summer in a glass.",
+      "ingredients": [
+        "cat:rhum",
+        "liq_fraise",
+        "citron",
+        "sirop_sucre"
+      ],
+      "photo": "photos/strawberry_daiquiri.jpg",
+      "ordre": 9
+    },
+    {
+      "id": "mai_tai",
+      "nom": "Mai Tai",
+      "categorie": "rhum",
+      "style_fr": "Exotique · Amandé",
+      "style_he": "אקזוטי · שקדי",
+      "style_en": "Exotic · Nutty",
+      "phrase_fr": "Une escapade tiki aux notes d'amande.",
+      "phrase_he": "בריחה טרופית עם ניחוחות שקד.",
+      "phrase_en": "A tiki escape with notes of almond.",
+      "ingredients": [
+        "cat:rhum",
+        "cointreau",
+        "liq_amande",
+        "citron",
+        "sirop_sucre"
+      ],
+      "photo": "photos/mai_tai.jpg",
+      "ordre": 10
+    },
+    {
+      "id": "mojito",
+      "nom": "Mojito",
+      "categorie": "rhum",
+      "style_fr": "Frais · Mentholé",
+      "style_he": "רענן · נענעי",
+      "style_en": "Fresh · Minty",
+      "phrase_fr": "Menthe fraîche et bulles, l'éternel favori.",
+      "phrase_he": "נענע טרייה ובועות, האהוב הנצחי.",
+      "phrase_en": "Fresh mint and bubbles, the eternal favourite.",
+      "ingredients": [
+        "cat:rhum",
+        "menthe",
+        "citron",
+        "sirop_sucre",
+        "eau_gazeuse"
+      ],
+      "photo": "photos/mojito.jpg",
+      "ordre": 11
+    },
+    {
+      "id": "godfather",
+      "nom": "Godfather",
+      "categorie": "whisky",
+      "style_fr": "Rond · Acidulé",
+      "style_he": "עגול · חמצמץ",
+      "style_en": "Smooth · Tangy",
+      "phrase_fr": "Le whisky adouci par l'amande, réveillé par une touche de citron.",
+      "phrase_he": "וויסקי מתרכך בנגיעת שקדים ומתעורר עם קצת לימון.",
+      "phrase_en": "Whisky softened by almond, brightened with a touch of lemon.",
+      "ingredients": [
+        "cat:whisky",
+        "liq_amande",
+        "citron",
+        "sirop_sucre"
+      ],
+      "photo": "photos/godfather.jpg",
+      "ordre": 12
+    },
+    {
+      "id": "boulevardier",
+      "nom": "Boulevardier",
+      "categorie": "whisky",
+      "style_fr": "Amer · Profond",
+      "style_he": "מריר · עמוק",
+      "style_en": "Bitter · Deep",
+      "phrase_fr": "Le cousin du Negroni, plus chaud et plus rond grâce au whisky.",
+      "phrase_he": "בן הדוד של הנגרוני, חם ועגול יותר בזכות הוויסקי.",
+      "phrase_en": "The Negroni's cousin, warmer and rounder thanks to the whisky.",
+      "ingredients": [
+        "cat:whisky",
+        "campari",
+        "martini_rosso"
+      ],
+      "photo": "photos/boulevardier.jpg",
+      "ordre": 13
+    },
+    {
+      "id": "whisky_smash",
+      "nom": "Whisky Smash",
+      "categorie": "whisky",
+      "style_fr": "Frais · Herbacé",
+      "style_he": "רענן · עשבוני",
+      "style_en": "Fresh · Herbal",
+      "phrase_fr": "Menthe fraîche écrasée, citron et whisky : simple et vif.",
+      "phrase_he": "נענע טרייה כתושה, לימון ווויסקי: פשוט ורענן.",
+      "phrase_en": "Fresh muddled mint, lemon and whisky: simple and lively.",
+      "ingredients": [
+        "cat:whisky",
+        "menthe",
+        "citron",
+        "sirop_sucre"
+      ],
+      "photo": "photos/whisky_smash.jpg",
+      "ordre": 14
+    },
+    {
+      "id": "gold_rush",
+      "nom": "Gold Rush",
+      "categorie": "whisky",
+      "style_fr": "Doux · Acidulé",
+      "style_he": "מתוק · חמצמץ",
+      "style_en": "Sweet · Tangy",
+      "phrase_fr": "Le miel et le citron réchauffent le whisky comme un rayon de soleil.",
+      "phrase_he": "דבש ולימון מחממים את הוויסקי כמו קרן שמש.",
+      "phrase_en": "Honey and lemon warm the whisky like a ray of sunshine.",
+      "ingredients": [
+        "cat:whisky",
+        "miel",
+        "citron",
+        "sirop_sucre",
+        "menthe"
+      ],
+      "photo": "photos/gold_rush.jpg",
+      "ordre": 15
+    },
+    {
+      "id": "ce_soir",
+      "nom": "Ce Soir",
+      "categorie": "whisky",
+      "style_fr": "Signature · Lumineux",
+      "style_he": "סיגנצ׳ר · זוהר",
+      "style_en": "Signature · Bright",
+      "phrase_fr": "La signature de la maison : whisky, pamplemousse et miel, comme une fin de soirée dorée.",
+      "phrase_he": "הקוקטייל של הבית: ויסקי, אשכולית ודבש, כמו סוף ערב מוזהב.",
+      "phrase_en": "The house signature: whisky, grapefruit and honey, like a golden end of evening.",
+      "ingredients": [
+        "cat:whisky",
+        "creme_pamplemousse",
+        "citron",
+        "miel"
+      ],
+      "photo": "",
+      "ordre": 16
+    },
+    {
+      "id": "manhattan",
+      "nom": "Manhattan",
+      "categorie": "whisky",
+      "style_fr": "Élégant · Profond",
+      "style_he": "אלגנטי · עמוק",
+      "style_en": "Elegant · Deep",
+      "phrase_fr": "Whisky et vermouth rouge, le grand classique des bars de New York.",
+      "phrase_he": "ויסקי ורמוט אדום, הקלאסיקה הגדולה של הברים בניו יורק.",
+      "phrase_en": "Whisky and red vermouth, the great New York bar classic.",
+      "ingredients": [
+        "cat:whisky",
+        "martini_rosso"
+      ],
+      "photo": "",
+      "ordre": 17
+    }
+  ]
+}
