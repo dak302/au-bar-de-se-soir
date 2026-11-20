@@ -14,6 +14,8 @@
 <meta property="og:title" content="Au Bar de ce Soir">
 <meta property="og:description" content="La carte des cocktails du bar de ce soir.">
 <meta property="og:image" content="icone.png">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Frank+Ruhl+Libre:wght@500&family=Heebo:wght@400;500;600&family=Inter:wght@400;500;600&display=swap">
 <style>
@@ -159,6 +161,12 @@ summary::-webkit-details-marker{display:none}
 @keyframes breathe{50%{opacity:.45}}
 .spin{width:18px;height:18px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .8s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes sp{to{transform:rotate(360deg)}}
+/* Verre 3D */
+.glass-slot{position:relative;height:230px;margin:4px 0 -6px;touch-action:pan-y}
+.glass-canvas{display:block;width:100%;height:100%;opacity:0;transition:opacity 500ms var(--ease);cursor:grab}
+.glass-slot.ready .glass-canvas{opacity:1}
+.glass-canvas:active{cursor:grabbing}
+.no3d .glass-slot{display:none}
 /* Mouvement réduit : on garde des fondus courts, on enlève les déplacements. */
 @media (prefers-reduced-motion:reduce){
   .rise{animation:fade 200ms ease forwards;transform:none;animation-delay:0ms}
@@ -388,7 +396,8 @@ const OPS = {
       categorie: db.categories.some(c => c.id === o.categorie) ? o.categorie : 'autres',
       style_fr: o.style_fr || '', style_he: o.style_he || '', style_en: o.style_en || '',
       phrase_fr: o.phrase_fr || '', phrase_he: o.phrase_he || '', phrase_en: o.phrase_en || '',
-      ingredients: o.ingredients || [] };
+      ingredients: o.ingredients || [],
+      couleur: /^#[0-9a-fA-F]{6}$/.test(o.couleur || '') ? o.couleur : '#D9A441' };
     if (!clean.nom) throw new Error('Le nom est obligatoire');
     if (!clean.ingredients.length) throw new Error('Ajoute au moins un ingrédient');
     const id = await mutate(d => {
@@ -520,15 +529,26 @@ function render(id){
   if (id === 'about') renderAbout();
   if (id === 'manager') renderManager();
 }
+// Verre 3D (glass3d.js) : chargé à part ; s'il n'arrive pas, on masque simplement son emplacement.
+const SIGNATURE = '#EE9A7A';
+function glassAttach(el, opts){
+  if (!el) return;
+  window.__glassReq = { el, opts };
+  if (window.Glass) window.Glass.attach(el, opts);
+}
+setTimeout(() => { if (!window.Glass) document.body.classList.add('no3d'); }, 10000);
 function renderHome(){
   const cats = visibleCats();
+  const sig = pub.cocktails.find(c => c.id === 'ce_soir');
   $('#v-home').innerHTML = `
-    <div class="pad rise" style="padding-top:18px"><p class="eyebrow">${BAR}</p><h1 class="h1 big">${t('choose')}</h1></div>
+    <div class="glass-slot rise" id="homeGlass"></div>
+    <div class="pad rise" style="--i:1;padding-top:6px"><p class="eyebrow">${BAR}</p><h1 class="h1 big">${t('choose')}</h1></div>
     ${cats.length ? `<div class="grid">${cats.map((id, i) => `
       <button class="cat rise" style="--i:${i+1}" data-act="cat" data-id="${esc(id)}">
         <div class="ph">${catPhoto(id) ? img(catPhoto(id)) : `<span class="ph-word">${esc(catLabel(id))}</span>`}</div>
         <span class="cat-name">${esc(catLabel(id))}</span>
       </button>`).join('')}</div>` : `<p class="empty rise">${t('empty')}</p>`}`;
+  glassAttach($('#homeGlass'), { color: (sig && sig.couleur) || SIGNATURE, fill: 0.82 });
 }
 function cocktailCard(c, i){
   return `<article class="ck rise" style="--i:${i}">
@@ -551,9 +571,11 @@ function renderSurprise(){
   const c = pool[Math.floor(Math.random() * pool.length)];
   lastSurprise = c.id;
   $('#v-surprise').innerHTML = `
-    <div class="pad rise" style="padding-top:18px"><p class="eyebrow">${esc(catLabel(c.categorie))}</p><h1 class="h1 big">${t('surprise')}</h1></div>
-    <div class="list">${cocktailCard(c, 1)}</div>
-    <button class="again rise" style="--i:2" data-act="surprise-again">${t('another')}</button>`;
+    <div class="glass-slot rise" id="surpriseGlass"></div>
+    <div class="pad rise" style="--i:1;padding-top:6px"><p class="eyebrow">${esc(catLabel(c.categorie))}</p><h1 class="h1 big">${t('surprise')}</h1></div>
+    <div class="list">${cocktailCard(c, 2)}</div>
+    <button class="again rise" style="--i:3" data-act="surprise-again">${t('another')}</button>`;
+  glassAttach($('#surpriseGlass'), { color: c.couleur || SIGNATURE, fill: 0.82, animate: true });
 }
 function renderGuestbook(){
   const v = $('#v-guestbook');
@@ -774,6 +796,8 @@ function cktSheet(c){
     <div class="field"><label for="f_nom">Nom</label><input class="input" id="f_nom" value="${esc(c.nom)}"></div>
     <div class="field"><label for="f_cat">Catégorie</label>
       <select class="input" id="f_cat">${admin.categories.map(k => `<option value="${esc(k.id)}" ${c.categorie===k.id?'selected':''}>${esc(k.nom_fr)}</option>`).join('')}</select></div>
+    <div class="field"><label for="f_couleur">Couleur du liquide (verre 3D)</label>
+      <input class="input" id="f_couleur" type="color" value="${esc(c.couleur || '#D9A441')}" style="height:52px;padding:6px"></div>
     <div class="field"><label for="f_style">Style</label><input class="input" id="f_style" placeholder="Frais · Acidulé" value="${esc(c.style_fr)}"></div>
     <div class="field"><label for="f_phrase">Phrase</label><textarea class="input" id="f_phrase">${esc(c.phrase_fr)}</textarea></div>
     <div class="field"><label>Ingrédients</label>
@@ -806,7 +830,7 @@ function catSheet(c){
 function cktFromForm(){
   const v = id => ($('#'+id) || {}).value || '';
   return Object.assign({}, edit.obj, {
-    nom: v('f_nom').trim(), categorie: v('f_cat'),
+    nom: v('f_nom').trim(), categorie: v('f_cat'), couleur: v('f_couleur'),
     style_fr: v('f_style'), phrase_fr: v('f_phrase'),
     style_he: v('f_style_he'), phrase_he: v('f_phrase_he'),
     style_en: v('f_style_en'), phrase_en: v('f_phrase_en'),
@@ -1077,5 +1101,6 @@ dragToClose($('#drawer'), 'x', () => $('#drawer').classList.contains('on'), clos
   setTimeout(() => $('#splash').classList.add('out'), 250);
 })();
 </script>
+<script type="module" src="glass3d.js"></script>
 </body>
 </html>

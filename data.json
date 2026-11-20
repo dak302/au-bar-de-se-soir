@@ -305,7 +305,8 @@
         "citron"
       ],
       "photo": "photos/passion_martini.jpg",
-      "ordre": 1
+      "ordre": 1,
+      "couleur": "#F2B33D"
     },
     {
       "id": "lemon_drop",
@@ -324,7 +325,8 @@
         "sirop_sucre"
       ],
       "photo": "photos/lemon_drop.jpg",
-      "ordre": 2
+      "ordre": 2,
+      "couleur": "#F1DE8A"
     },
     {
       "id": "moscow_mule",
@@ -342,7 +344,8 @@
         "citron"
       ],
       "photo": "photos/moscow_mule.jpg",
-      "ordre": 3
+      "ordre": 3,
+      "couleur": "#E6D7A3"
     },
     {
       "id": "strawberry_sour",
@@ -361,7 +364,8 @@
         "sirop_sucre"
       ],
       "photo": "photos/strawberry_sour.jpg",
-      "ordre": 4
+      "ordre": 4,
+      "couleur": "#E0566B"
     },
     {
       "id": "gimlet",
@@ -379,7 +383,8 @@
         "sirop_sucre"
       ],
       "photo": "photos/gimlet.jpg",
-      "ordre": 5
+      "ordre": 5,
+      "couleur": "#D9E5A8"
     },
     {
       "id": "negroni",
@@ -397,7 +402,8 @@
         "martini_rosso"
       ],
       "photo": "photos/negroni.jpg",
-      "ordre": 6
+      "ordre": 6,
+      "couleur": "#B3261E"
     },
     {
       "id": "gin_basil_smash",
@@ -417,7 +423,8 @@
         "sirop_sucre"
       ],
       "photo": "photos/gin_basil_smash.jpg",
-      "ordre": 7
+      "ordre": 7,
+      "couleur": "#9DC27A"
     },
     {
       "id": "daiquiri",
@@ -435,7 +442,8 @@
         "sirop_sucre"
       ],
       "photo": "photos/daiquiri.jpg",
-      "ordre": 8
+      "ordre": 8,
+      "couleur": "#EDE6BF"
     },
     {
       "id": "strawberry_daiquiri",
@@ -454,7 +462,8 @@
         "sirop_sucre"
       ],
       "photo": "photos/strawberry_daiquiri.jpg",
-      "ordre": 9
+      "ordre": 9,
+      "couleur": "#D93A4A"
     },
     {
       "id": "mai_tai",
@@ -474,7 +483,8 @@
         "sirop_sucre"
       ],
       "photo": "photos/mai_tai.jpg",
-      "ordre": 10
+      "ordre": 10,
+      "couleur": "#E08A2E"
     },
     {
       "id": "mojito",
@@ -494,7 +504,8 @@
         "eau_gazeuse"
       ],
       "photo": "photos/mojito.jpg",
-      "ordre": 11
+      "ordre": 11,
+      "couleur": "#CFE3B0"
     },
     {
       "id": "godfather",
@@ -513,7 +524,8 @@
         "sirop_sucre"
       ],
       "photo": "photos/godfather.jpg",
-      "ordre": 12
+      "ordre": 12,
+      "couleur": "#B8762E"
     },
     {
       "id": "boulevardier",
@@ -531,7 +543,8 @@
         "martini_rosso"
       ],
       "photo": "photos/boulevardier.jpg",
-      "ordre": 13
+      "ordre": 13,
+      "couleur": "#8E2A1E"
     },
     {
       "id": "whisky_smash",
@@ -550,7 +563,8 @@
         "sirop_sucre"
       ],
       "photo": "photos/whisky_smash.jpg",
-      "ordre": 14
+      "ordre": 14,
+      "couleur": "#D9B25C"
     },
     {
       "id": "gold_rush",
@@ -570,7 +584,8 @@
         "menthe"
       ],
       "photo": "photos/gold_rush.jpg",
-      "ordre": 15
+      "ordre": 15,
+      "couleur": "#E3A93C"
     },
     {
       "id": "ce_soir",
@@ -589,7 +604,8 @@
         "miel"
       ],
       "photo": "",
-      "ordre": 16
+      "ordre": 16,
+      "couleur": "#EE9A7A"
     },
     {
       "id": "manhattan",
@@ -606,7 +622,8 @@
         "martini_rosso"
       ],
       "photo": "",
-      "ordre": 17
+      "ordre": 17,
+      "couleur": "#7A2A1A"
     }
   ]
 }
